@@ -17,3 +17,9 @@ class Layer{
     }
   }
 }
+
+class InputLayer() extends Layer{
+  InputLayer(){
+    super();
+  }
+}
