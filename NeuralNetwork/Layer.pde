@@ -45,7 +45,6 @@ class Layer{
   }
   
   void printParams(){
-    print("Layer type: ");
     println(type);
     print("\tNumber neurons: ");
     println(neurons.length);
@@ -57,7 +56,7 @@ class Layer{
       println(")");
     }
     catch (NullPointerException e){
-      println("NULL");
+      println("NULL)");
     }
   }
 }
@@ -77,7 +76,7 @@ class OutputLayer extends Layer{
 }
 
 class HiddenLayer extends Layer{
-  HiddenLayer(int nNeurons ,Layer prev_Layer){
+  HiddenLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
     type = "hidden_layer";
   }

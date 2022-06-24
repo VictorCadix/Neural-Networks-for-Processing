@@ -13,8 +13,11 @@ class NN_Model{
     print("number of layers: ");
     println(layers.size());
     
+    int i = 0;
     for(Layer layer : layers){
+      print("layer " + str(i) + " -> ");
       layer.printParams();
+      i++;
     }
   }
 }
