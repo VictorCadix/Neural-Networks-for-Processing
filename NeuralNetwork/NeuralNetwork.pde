@@ -16,6 +16,8 @@ void setup(){
   model.addLayer(lay2);
   model.addLayer(out);
   
+  model.printParams();
+  
 }
 
 void draw(){

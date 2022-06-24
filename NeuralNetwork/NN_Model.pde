@@ -8,4 +8,13 @@ class NN_Model{
   void addLayer(Layer new_layer){
     layers.add(new_layer);
   }
+  
+  void printParams(){
+    print("number of layers: ");
+    println(layers.size());
+    
+    for(Layer layer : layers){
+      layer.printParams();
+    }
+  }
 }

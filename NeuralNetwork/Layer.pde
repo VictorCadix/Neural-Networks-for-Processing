@@ -3,6 +3,7 @@ class Layer{
   float [] neurons;
   int nNeurons;
   Layer prevLayer;
+  String type; 
   
   Layer(int nNeurons, Layer prev_Layer){
     prevLayer = prev_Layer;
@@ -10,6 +11,7 @@ class Layer{
     weights = new float[nNeurons][prevLayer.nNeurons];
     neurons = new float [nNeurons];
     neurons = activacion();
+    type = "";
     init();
   }
   
@@ -41,23 +43,35 @@ class Layer{
     t = sigmoide(t,nNeurons);
     return t;
   }
+  
+  void printParams(){
+    print("Layer type: ");
+    println(type);
+    print("\tNumber neurons: ");
+    println(neurons.length);
+    print("\tWeights dimension: ");
+    println(weights.length);
+  }
 }
 
 class InputLayer extends Layer{
   InputLayer(int nNeurons){
-   super(nNeurons);
+    super(nNeurons);
+    type = "input_layer";
   }
 }
 
 class OutputLayer extends Layer{
   OutputLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
+    type = "output_layer";
   }
 }
 
 class HiddenLayer extends Layer{
   HiddenLayer(int nNeurons ,Layer prev_Layer){
     super(nNeurons, prev_Layer);
+    type = "hidden_layer";
   }
 }
 
