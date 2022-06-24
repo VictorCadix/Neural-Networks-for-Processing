@@ -1,5 +1,6 @@
 class Layer{
   float[][] weights;
+  float [] neurons;
   int nNeurons;
   Layer prevLayer;
   
@@ -7,11 +8,17 @@ class Layer{
     prevLayer = prev_Layer;
     nNeurons=nNeurons;
     weights = new float[nNeurons][prevLayer.nNeurons];
+    neurons = new float [nNeurons];
+    neurons = activacion();
     init();
   }
   
   Layer(int nNeurons){
     nNeurons=nNeurons;
+    neurons = new float [nNeurons];
+     for (int i = 0; i < nNeurons; i++){
+      neurons[i] = random(0.0,1.0);
+    }
   }
   
   void init(){
@@ -22,9 +29,21 @@ class Layer{
     }
   }
   
-   
+  float [] activacion(){
+    float [] t = new float [nNeurons];
+      for (int i = 0; i < nNeurons; i++){
+        float sum = 0;
+        for (int j = 0; j < prevLayer.nNeurons; j++){
+          sum += weights[i][j] * prevLayer.neurons[j];
+      }
+          t[i] = sum;
+      }
+      
+      t = sigmoide(t,nNeurons);
+      return t;
 }
 
+}
 class InputLayer extends Layer{
   InputLayer(int nNeurons){
    super(nNeurons);
@@ -38,7 +57,7 @@ class OutputLayer extends Layer{
 }
 
 class HiddenLayer extends Layer{
-  HiddenLayer(int nNeurons, Layer prev_Layer){
+  HiddenLayer(int nNeurons ,Layer prev_Layer){
     super(nNeurons, prev_Layer);
   }
 }

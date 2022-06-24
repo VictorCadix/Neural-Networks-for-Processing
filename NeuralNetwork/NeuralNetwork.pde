@@ -9,7 +9,7 @@ void setup(){
   in = new InputLayer(36);
   lay1 = new HiddenLayer(18,in);
   lay2 = new HiddenLayer(18,lay1);
-  out = new OutputLayer(10, lay2);
+  out = new OutputLayer(10,lay2);
   
   model.addLayer(in);
   model.addLayer(lay1);
