@@ -49,8 +49,16 @@ class Layer{
     println(type);
     print("\tNumber neurons: ");
     println(neurons.length);
-    print("\tWeights dimension: ");
-    println(weights.length);
+    print("\tWeights dimension: (");
+    try{
+      print(weights.length);
+      print(",");
+      print(weights[0].length);
+      println(")");
+    }
+    catch (NullPointerException e){
+      println("NULL");
+    }
   }
 }
 
