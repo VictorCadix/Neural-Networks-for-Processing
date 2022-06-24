@@ -6,7 +6,7 @@ class Layer{
   
   Layer(int nNeurons, Layer prev_Layer){
     prevLayer = prev_Layer;
-    nNeurons=nNeurons;
+    this.nNeurons = nNeurons;
     weights = new float[nNeurons][prevLayer.nNeurons];
     neurons = new float [nNeurons];
     neurons = activacion();
@@ -14,7 +14,7 @@ class Layer{
   }
   
   Layer(int nNeurons){
-    nNeurons=nNeurons;
+    this.nNeurons = nNeurons;
     neurons = new float [nNeurons];
      for (int i = 0; i < nNeurons; i++){
       neurons[i] = random(0.0,1.0);
@@ -31,19 +31,18 @@ class Layer{
   
   float [] activacion(){
     float [] t = new float [nNeurons];
-      for (int i = 0; i < nNeurons; i++){
-        float sum = 0;
-        for (int j = 0; j < prevLayer.nNeurons; j++){
-          sum += weights[i][j] * prevLayer.neurons[j];
+    for (int i = 0; i < nNeurons; i++){
+      float sum = 0;
+      for (int j = 0; j < prevLayer.nNeurons; j++){
+        sum += weights[i][j] * prevLayer.neurons[j];
       }
-          t[i] = sum;
-      }
-      
-      t = sigmoide(t,nNeurons);
-      return t;
+      t[i] = sum;
+    }
+    t = sigmoide(t,nNeurons);
+    return t;
+  }
 }
 
-}
 class InputLayer extends Layer{
   InputLayer(int nNeurons){
    super(nNeurons);
@@ -65,15 +64,15 @@ class HiddenLayer extends Layer{
 float [] sigmoide (float z[],int n){
   float [] s = new float [n];
     for (int i = 0; i < n; i++){
-        s[i] = 1/(1+ exp(-z[i]));
-      }
-   return s;
-  }
+      s[i] = 1/(1+ exp(-z[i]));
+    }
+  return s;
+}
   
 float [] relu (float z[],int n){
   float [] s = new float [n];
     for (int i = 0; i < n; i++){
-        s[i] = max(0,z[i]);
-      }
-   return s;
-  }
+      s[i] = max(0,z[i]);
+    }
+  return s;
+}
