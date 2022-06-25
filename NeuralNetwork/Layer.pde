@@ -69,9 +69,12 @@ class InputLayer extends Layer{
 }
 
 class OutputLayer extends Layer{
+  float costo;
+  
   OutputLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
     type = "output_layer";
+    costo = func_costo(neurons, nNeurons, 4);
   }
 }
 
@@ -96,4 +99,17 @@ float [] relu (float z[],int n){
       s[i] = max(0,z[i]);
     }
   return s;
+}
+
+//La capa de salida debe de calcular el costo de cada simulación. 
+//Para ello, se hace el cuadrado del valor que se obtiene en cada neurona de salida restando el valor que se desea obtener en cada una de estas neuronas
+float func_costo(float z[],int n,int want){
+  float cost = 0;
+  for (int i = 0; i < n; i++){
+    if (n == want)
+    cost += pow(z[i] - 1,2);
+    else
+    cost += pow(z[i] - 0,2);  
+  }
+  return cost;
 }
