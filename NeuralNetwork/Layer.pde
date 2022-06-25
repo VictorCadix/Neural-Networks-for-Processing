@@ -58,6 +58,14 @@ class Layer{
     catch (NullPointerException e){
       println("NULL)");
     }
+    
+    if(type == "output_layer"){
+      print("\tCost function: ");
+      OutputLayer out = (OutputLayer)this;
+      println(out.costo);
+      print("\tMSE: ");
+      println(out.error);
+    }
   }
 }
 
@@ -69,12 +77,13 @@ class InputLayer extends Layer{
 }
 
 class OutputLayer extends Layer{
-  float costo;
+  float costo, error;
   
   OutputLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
     type = "output_layer";
     costo = func_costo(neurons, nNeurons, 4);
+    error = mse(neurons, nNeurons, 4);
   }
 }
 
@@ -112,4 +121,15 @@ float func_costo(float z[],int n,int want){
     cost += pow(z[i] - 0,2);  
   }
   return cost;
+}
+
+float mse(float z[],int n,int want){
+  float mse = 0;
+  for (int i = 0; i < n; i++){
+    if (n == want)
+    mse += pow(z[i] - 1,2);
+    else
+    mse += pow(z[i] - 0,2);  
+  }
+  return mse/n;
 }
