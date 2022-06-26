@@ -21,6 +21,13 @@ class NN_Model{
     }
   }
   
+  void forward_prop(){
+    for(Layer layer : layers){
+      layer.compute_output();
+      layer.activate();
+    }
+  }
+  
   float compute_loss(float[] y_){
     int output_layer = layers.size() - 1;
     float[] estimated = layers.get(output_layer).neurons;

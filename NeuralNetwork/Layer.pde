@@ -3,7 +3,8 @@ class Layer{
   float [] neurons;
   int nNeurons;
   Layer prevLayer;
-  String type; 
+  String layer_type;
+  String activ_type;
   
   Layer(int nNeurons, Layer prev_Layer){
     prevLayer = prev_Layer;
@@ -11,7 +12,7 @@ class Layer{
     weights = new float[nNeurons][prevLayer.nNeurons];
     neurons = new float [nNeurons];
     neurons = activacion();
-    type = "";
+    layer_type = "";
     init();
   }
   
@@ -31,21 +32,28 @@ class Layer{
     }
   }
   
-  float [] activacion(){
-    float [] t = new float [nNeurons];
+  void compute_output(){
+    //inputs x Weights + bias
     for (int i = 0; i < nNeurons; i++){
       float sum = 0;
       for (int j = 0; j < prevLayer.nNeurons; j++){
         sum += weights[i][j] * prevLayer.neurons[j];
       }
-      t[i] = sum;
+      neurons[i] = sum;
     }
-    t = sigmoide(t,nNeurons);
-    return t;
+  }
+  
+  void activate(){
+    if (activ_type == "relu"){
+      neurons = relu(neurons, nNeurons);
+    }
+    else if (activ_type == "simoid"){
+      neurons = sigmoide(neurons, nNeurons);
+    }
   }
   
   void printParams(){
-    println(type);
+    println(layer_type);
     print("\tNumber neurons: ");
     println(neurons.length);
     print("\tWeights dimension: (");
@@ -59,7 +67,7 @@ class Layer{
       println("NULL)");
     }
     
-    if(type == "output_layer"){
+    if(layer_type == "output_layer"){
       print("\tCost function: ");
       OutputLayer out = (OutputLayer)this;
       println(out.costo);
@@ -72,7 +80,7 @@ class Layer{
 class InputLayer extends Layer{
   InputLayer(int nNeurons){
     super(nNeurons);
-    type = "input_layer";
+    layer_type = "input_layer";
   }
 }
 
@@ -81,7 +89,7 @@ class OutputLayer extends Layer{
   
   OutputLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
-    type = "output_layer";
+    layer_type = "output_layer";
     costo = func_costo(neurons, nNeurons, 4);
     error = mse(neurons, nNeurons, 4);
   }
@@ -90,7 +98,7 @@ class OutputLayer extends Layer{
 class HiddenLayer extends Layer{
   HiddenLayer(int nNeurons, Layer prev_Layer){
     super(nNeurons, prev_Layer);
-    type = "hidden_layer";
+    layer_type = "hidden_layer";
   }
 }
 
