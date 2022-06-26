@@ -47,11 +47,11 @@ class Layer{
     if (activ_type == "relu"){
       neurons = relu(neurons, nNeurons);
     }
-    else if (activ_type == "simoid"){
+    else if (activ_type == "sigmoid"){
       neurons = sigmoide(neurons, nNeurons);
     }
     else{
-      println("No activation funcion selected");
+      println("ERROR: No activation funcion selected");
     }
   }
   
