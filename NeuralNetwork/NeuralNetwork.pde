@@ -18,7 +18,7 @@ void setup(){
   
   model.printParams();
   
-  
+  model.forward_prop();
   float[] y_ = {0.1, 0.9};
   float loss = model.compute_loss(y_);
   print("loss: ");

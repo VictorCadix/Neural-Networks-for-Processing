@@ -11,8 +11,8 @@ class Layer{
     this.nNeurons = nNeurons;
     weights = new float[nNeurons][prevLayer.nNeurons];
     neurons = new float [nNeurons];
-    neurons = activacion();
     layer_type = "";
+    activ_type = "";
     init();
   }
   

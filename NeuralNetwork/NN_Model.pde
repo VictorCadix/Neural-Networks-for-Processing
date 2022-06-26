@@ -22,7 +22,8 @@ class NN_Model{
   }
   
   void forward_prop(){
-    for(Layer layer : layers){
+    for (int i = 1; i < layers.size(); i++){
+      Layer layer = layers.get(i);
       layer.compute_output();
       layer.activate();
     }
