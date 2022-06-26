@@ -7,9 +7,9 @@ void setup(){
   
   model = new NN_Model();
   in = new InputLayer(36);
-  lay1 = new HiddenLayer(18,in);
-  lay2 = new HiddenLayer(18,lay1);
-  out = new OutputLayer(2,lay2);
+  lay1 = new HiddenLayer(18, in, "relu");
+  lay2 = new HiddenLayer(18, lay1, "relu");
+  out = new OutputLayer(2, lay2, "sigmoid");
   
   model.addLayer(in);
   model.addLayer(lay1);
