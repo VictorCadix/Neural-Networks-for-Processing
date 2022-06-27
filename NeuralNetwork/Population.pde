@@ -1,4 +1,3 @@
-
 class Population{
   int nIndividues;
   float mutation_rate;

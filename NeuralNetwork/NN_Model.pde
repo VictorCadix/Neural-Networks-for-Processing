@@ -62,6 +62,7 @@ float mae(float[] z, float[]y_){
   int n = z.length;
   for (int i = 0; i < n; i++){
     mae += abs(z[i]-y_[i]);
+
   }
   return mae/n;
 }
@@ -74,6 +75,7 @@ float mse(float[] z, float[]y_){
   }
   return mse/n;
 }
+
 
 float func_costo(float z[],int n,int want){
   float costo = 0;
