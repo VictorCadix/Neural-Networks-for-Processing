@@ -20,14 +20,16 @@ void setup(){
   size(800,400);
   imag = loadBytes("train-images-idx3-ubyte");
   num = loadBytes("train-labels-idx1-ubyte");
-  int [] num_int = new int[num.length];
-   
-  for (int i = 0 ; i < num.length; i++) {
-    num_int [i] = (num [i] & 0xFF);
+  int [] num_int = new int[num.length - 8];
+  print("num.length: ");
+  print(num.length);
+  
+  for (int i = 8 ; i < num.length; i++) {
+    num_int [i-8] = (num [i] & 0xFF);
   }
   
   model = new NN_Model();
-  printArray(imag);
+  //printArray(imag);
   //neuin = imag[1].size();
   in = new InputLayer(neuin);
   lay1 = new HiddenLayer(neulay1, in, "relu");
