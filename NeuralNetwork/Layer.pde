@@ -73,13 +73,13 @@ class Layer{
     print("\tActivation function: ");
     println(activ_type);
     
-    if(layer_type == "output_layer"){
-      print("\tCost function: ");
-      OutputLayer out = (OutputLayer)this;
-      println(out.costo);
-      print("\tMSE: ");
-      println(out.error);
-    }
+    //if(layer_type == "output_layer"){
+      //print("\tCost function: ");
+      //OutputLayer out = (OutputLayer)this;
+      //println(out.costo);
+      //print("\tMSE: ");
+      //println(out.error);
+    //}
   }
 }
 
@@ -91,13 +91,13 @@ class InputLayer extends Layer{
 }
 
 class OutputLayer extends Layer{
-  float costo, error;
+  //float costo, error;
   
   OutputLayer(int nNeurons, Layer prev_Layer, String activation_type){
     super(nNeurons, prev_Layer, activation_type);
     layer_type = "output_layer";
-    costo = func_costo(neurons, nNeurons, 4);
-    error = mse(neurons, nNeurons, 4);
+    //costo = func_costo(neurons, nNeurons, 4);
+    //error = mse(neurons, nNeurons, 4);
   }
 }
 

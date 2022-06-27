@@ -43,13 +43,14 @@ class NN_Model{
 //neurona de salida restando el valor que se desea obtener en cada 
 //una de estas neuronas
 
-float func_costo(float z[],int n,int want){
+float func_costo(float z[],int want){
   float cost = 0;
+  int n = z.length;
   for (int i = 0; i < n; i++){
     if (n == want)
-    cost += pow(z[i] - 1,2);
+    cost += pow(z[i] - 1, 2);
     else
-    cost += pow(z[i] - 0,2);  
+    cost += pow(z[i] - 0, 2);  
   }
   return cost;
 }
@@ -63,8 +64,9 @@ float mse(float[] z, float[]y_){
   return mse/n;
 }
 
-float mse(float z[],int n,int want){
+float mse(float z[],int want){
   float mse = 0;
+  int n = z.length;
   for (int i = 0; i < n; i++){
     if (n == want)
     mse += pow(z[i]-1, 2);
