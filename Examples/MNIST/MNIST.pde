@@ -13,7 +13,7 @@ int elitism = 0;
 float min_error;
 PrintWriter log_file;
 int generation = 0;
-
+int flat = 0;
 //Raw dataset
 byte [] imag,num;
 
@@ -49,15 +49,14 @@ void setup(){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
   }
-  print("img_int[0]: ");
-  for (int i = 0; i < 784; i++){
-    if (i % 28 == 0){
-      println();
-    }
-    print(img_int[1][i]);
-    print(",");
-  }
-  println();
+ // print("img_int[0]: ");
+  //for (int i = 0; i < 784; i++){
+   // if (i % 28 == 0){
+   //   println();
+   // }
+   // print(img_int[1][i]);
+   // print(",");
+ // println();
   
   
   
@@ -101,8 +100,11 @@ void draw(){
   for (Individual indiv: population.individuals){
     genes2weights(indiv.chromosome);
     float error = 0;
-    
+    flat++;
+    print("Flat: ");
+    println(flat);
     for(int i = 0; i < nImg; i++) {
+      
       in.setNeurons(img_int [i]);
       model.forward_prop();
       error += func_costo(out.neurons,num_int[i]);
@@ -129,6 +131,7 @@ void draw(){
   }
   int best = population.getBetsIndiv();
   println(population.individuals[best].fitness);
+  
   
   log_file.print(generation);
   log_file.print(",");
@@ -171,9 +174,9 @@ void genes2weights(float[] chromosome){
        }
     }
   }
-  //else{
-   // println("Error al asignar los pesos");
-  //}
+  else{
+    println("Error al asignar los pesos");
+  }
   
   lay1.setWeights(w1);
   lay2.setWeights(w2);
