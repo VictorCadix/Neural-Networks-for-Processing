@@ -77,8 +77,9 @@ float mse(float[] z, float[]y_){
 }
 
 
-float func_costo(float z[],int n,int want){
+float func_costo(float z[],int want){
   float costo = 0;
+  int n = z.length;
   for (int i = 0; i < n; i++){
     if (n == want)
     costo += pow(z[i]-1, 2);

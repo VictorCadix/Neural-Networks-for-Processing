@@ -2,7 +2,7 @@ NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
 OutputLayer out;
-int neuin = 36, neulay1 = 18, neulay2 = 18, neuout = 10;
+int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
 Population population;
 int nParameters;
 int nIndiv = 10000;
@@ -18,13 +18,14 @@ int generation = 0;
 byte [] imag,num;
 
 //Process dataset
-int [][] img_int;
+float [][] img_int;
 int [] num_int;
+int nImg;
 
 void setup(){
   size(800,400);
-  imag = loadBytes("train-images-idx3-ubyte");
-  num = loadBytes("train-labels-idx1-ubyte");
+  imag = loadBytes("train-images.idx3-ubyte");
+  num = loadBytes("train-labels.idx1-ubyte");
   
   num_int = new int[num.length - 8];
   print("num.length: ");
@@ -39,10 +40,10 @@ void setup(){
   
   print("imag.length: ");
   println(imag.length);
-  int nImg = (imag.length - 16) / (28*28); 
+  nImg = (imag.length - 16) / (28*28); 
   print("nImg: ");
   println(nImg);
-  img_int = new int[nImg][28*28];
+  img_int = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
@@ -61,8 +62,6 @@ void setup(){
   
   
   model = new NN_Model();
-  //printArray(imag);
-  //neuin = imag[1].size();
   in = new InputLayer(neuin);
   lay1 = new HiddenLayer(neulay1, in, "relu");
   lay2 = new HiddenLayer(neulay2, lay1, "relu");
@@ -88,7 +87,7 @@ void draw(){
   PImage disp_img = createImage(28, 28, RGB);
   disp_img.loadPixels();
   for (int i = 0; i < disp_img.pixels.length; i++) {
-    int pixel_val = img_int[1][i];
+    float pixel_val = img_int[1][i];
     disp_img.pixels[i] = color(pixel_val,pixel_val,pixel_val);
   }
   disp_img.updatePixels();
@@ -97,12 +96,21 @@ void draw(){
   generation++;
   print("Generation: ");
   println(generation);
+ 
+//Evaluate
+  for (Individual indiv: population.individuals){
+    genes2weights(indiv.chromosome);
+    float error = 0;
+    
+    for(int i = 0; i < nImg; i++) {
+      in.setNeurons(img_int [i]);
+      model.forward_prop();
+      error += func_costo(out.neurons,num_int[i]);
+    }
+    error /= nImg;
+    indiv.fitness = 1/error;
+  }
   
-  model.forward_prop();
-  float[] y_ = {0.1, 0.9};
-  //float loss = model.compute_loss(y_);
-  //print("loss: ");
- // print(loss);
   population.calculate_selection_probability();
   
   Individual child [] = new Individual [nIndiv];
@@ -120,10 +128,7 @@ void draw(){
     
   }
   int best = population.getBetsIndiv();
-  //PImage model = genes2image(population.individuals[best].chromosome);
   println(population.individuals[best].fitness);
-  //image(target_image, 0, 0, 400, 400);
-  //image(model, 400, 0, 400, 400);
   
   log_file.print(generation);
   log_file.print(",");
@@ -135,4 +140,42 @@ void draw(){
     population.individuals[i] = child[i];    
   }
   
+}
+
+void genes2weights(float[] chromosome){
+  float [][] w1 = new float[neulay1][neuin];
+  float [][] w2 = new float[neulay2][neulay1];
+  float [][] w3 = new float[neuout][neulay2];
+  int i = 0;
+  if(i < (neuin*neulay1)){
+    for (int j1 = 0; j1 < neulay1; j1++) {
+       for(int k1 = 0; k1 < neuin; k1++){
+         w1 [j1][k1] = chromosome[i];
+         i++;
+       }
+    }
+  }
+  else if(i<(neuin*neulay1+neulay1*neulay2) && i>=(neuin*neulay1)){
+    for (int j2 = 0; j2 < neulay2; j2++) {
+       for(int k2 = 0; k2 < neulay1; k2++){
+         w2 [j2][k2] = chromosome[i];
+         i++;
+       }
+    }
+  }
+  else if(i>=(neuin*neulay1+neulay1*neulay2) && i<nParameters){
+    for (int j3 = 0; j3 < neuout; j3++) {
+       for(int k3 = 0; k3 < neulay2; k3++){
+         w3 [j3][k3] = chromosome[i];
+         i++;
+       }
+    }
+  }
+  //else{
+   // println("Error al asignar los pesos");
+  //}
+  
+  lay1.setWeights(w1);
+  lay2.setWeights(w2);
+  out.setWeights(w3);
 }

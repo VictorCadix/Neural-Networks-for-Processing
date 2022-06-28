@@ -19,9 +19,10 @@ class Layer{
   Layer(int nNeurons){
     this.nNeurons = nNeurons;
     neurons = new float [nNeurons];
-     for (int i = 0; i < nNeurons; i++){
-      neurons[i] = random(0.0,1.0);
-    }
+    layer_type = "";
+     //for (int i = 0; i < nNeurons; i++){
+      //neurons[i] = random(0.0,1.0);
+    //}
   }
   
   void init(){
@@ -53,6 +54,10 @@ class Layer{
     else{
       println("ERROR: No activation funcion selected");
     }
+  }
+  
+  void setWeights(float [][] w){
+    weights = w;
   }
   
   void printParams(){
@@ -87,6 +92,10 @@ class InputLayer extends Layer{
   InputLayer(int nNeurons){
     super(nNeurons);
     layer_type = "input_layer";
+  }
+  
+  void setNeurons(float []num){
+    this.neurons = num;
   }
 }
 
