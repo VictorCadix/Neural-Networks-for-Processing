@@ -2,7 +2,7 @@ NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
 OutputLayer out;
-int neuin = 36,neulay1 = 18,neulay2 = 18,neuout = 10;
+int neuin = 36, neulay1 = 18, neulay2 = 18, neuout = 10;
 Population population;
 int nParameters;
 int nIndiv = 10000;
@@ -14,19 +14,49 @@ float min_error;
 PrintWriter log_file;
 int generation = 0;
 
+//Raw dataset
 byte [] imag,num;
+
+//Process dataset
+int [][] img_int;
+int [] num_int;
 
 void setup(){
   size(800,400);
   imag = loadBytes("train-images-idx3-ubyte");
   num = loadBytes("train-labels-idx1-ubyte");
-  int [] num_int = new int[num.length - 8];
+  
+  num_int = new int[num.length - 8];
   print("num.length: ");
-  print(num.length);
+  println(num.length);
   
   for (int i = 8 ; i < num.length; i++) {
     num_int [i-8] = (num [i] & 0xFF);
   }
+  print("num_int.length: ");
+  println(num_int.length);
+  println(num_int[0]);
+  
+  print("imag.length: ");
+  println(imag.length);
+  int nImg = (imag.length - 16) / (28*28); 
+  print("nImg: ");
+  println(nImg);
+  img_int = new int[nImg][28*28];
+  for (int i = 0; i < nImg; i++) {
+    for(int j = 0; j < 784; j++){
+      img_int [i][j] = (imag [(i*784)+16] & 0xFF);
+    }
+  }
+  print("img_int[0]: ");
+  for (int i = 0; i < 784; i++){
+    if (i % 28 == 0){
+      println();
+    }
+    print(img_int[1][i]);
+    print(",");
+  }
+  println();
   
   model = new NN_Model();
   //printArray(imag);
