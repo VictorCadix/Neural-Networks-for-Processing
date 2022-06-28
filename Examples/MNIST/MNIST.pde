@@ -45,7 +45,7 @@ void setup(){
   img_int = new int[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
-      img_int [i][j] = (imag [(i*784)+16] & 0xFF);
+      img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
   }
   print("img_int[0]: ");
@@ -57,6 +57,8 @@ void setup(){
     print(",");
   }
   println();
+  
+  
   
   model = new NN_Model();
   //printArray(imag);
@@ -83,6 +85,15 @@ void setup(){
 }
 
 void draw(){
+  PImage disp_img = createImage(28, 28, RGB);
+  disp_img.loadPixels();
+  for (int i = 0; i < disp_img.pixels.length; i++) {
+    int pixel_val = img_int[1][i];
+    disp_img.pixels[i] = color(pixel_val,pixel_val,pixel_val);
+  }
+  disp_img.updatePixels();
+  image(disp_img, 0, 0);
+  
   generation++;
   print("Generation: ");
   println(generation);
