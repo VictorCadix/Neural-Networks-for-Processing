@@ -86,5 +86,5 @@ float func_costo(float z[],int want){
     else
     costo += pow(z[i]-0, 2);  
   }
-  return costo/n;
+  return costo;
 }
