@@ -5,7 +5,7 @@ OutputLayer out;
 int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
 Population population;
 int nParameters;
-int nIndiv = 10000;
+int nIndiv = 1000;
 int nCrossPoints = 1000;
 float mutation_rate = 0.0001;
 int elitism = 0;
@@ -107,8 +107,10 @@ void draw(){
     genes2weights(indiv.chromosome);
     float error = 0;
     flat++;
-    print("Flat: ");
-    println(flat);
+    if(flat % 100 == 0){
+      print(">");
+      //println(flat);
+    }
     
     //Comprueba que hay un batch completo
     //si no, comienza de nuevo
@@ -128,6 +130,13 @@ void draw(){
   
   population.calculate_selection_probability();
   
+  int best = population.getBetsIndiv();
+  println(population.individuals[best].fitness);
+  
+  log_file.print(generation);
+  log_file.print(",");
+  log_file.println(population.individuals[best].fitness);
+  
   Individual child [] = new Individual [nIndiv];
   for (int i = 0; i < nIndiv; i++){
     int p1 = population.get_parent();
@@ -142,13 +151,7 @@ void draw(){
     child[i].addMutation(mutation_rate);
     
   }
-  int best = population.getBetsIndiv();
-  println(population.individuals[best].fitness);
   
-  
-  log_file.print(generation);
-  log_file.print(",");
-  log_file.println(population.individuals[best].fitness);
   
   
   // Renew population
