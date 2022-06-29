@@ -121,7 +121,7 @@ void draw(){
       model.forward_prop();
       error += func_costo(out.neurons,num_int[i]);
     }
-    error /= batch_size;
+    //error /= batch_size;
     indiv.fitness = 1/error;
     last_img = last_img + batch_size;
   }
@@ -129,8 +129,8 @@ void draw(){
   population.calculate_selection_probability();
   
   int best = population.getBetsIndiv();
-  //println(population.individuals[best].fitness);
-  System.out.println(String.format("%.5f", population.individuals[best].fitness));
+  println(population.individuals[best].fitness);
+  //System.out.println(String.format("%.5f", population.individuals[best].fitness));
   
   log_file.print(generation);
   log_file.print(":");
@@ -156,17 +156,22 @@ void draw(){
   }
   
   if (generation == 5){
-    /*log_file2.print("{");
-    for(int i= 0; i < nParameters; i++){
-    log_file2.print(String.format("%.2f", population.individuals[best].chromosome[i]));
+    
+    byte[][] weights_byte = new byte[population.individuals[best].chromosome_length][4];
+    
+    for(int i= 0; i < population.individuals[best].chromosome_length; i++){
+      weights_byte[i]= floatToByteArray(population.individuals[best].chromosome[i]);
+    }
+    
+    log_file2.print("{");
+    for(int i= 0; i < population.individuals[best].chromosome_length; i++){
+    //log_file2.print(String.format("%.8f", population.individuals[best].chromosome[i]));
+    log_file2.print(weights_byte[i]);
       if(i < (population.individuals[best].chromosome_length-1)){
         log_file2.print(" , ");
       }
-      if(i == (population.individuals[best].chromosome_length-1)){
-        log_file2.println(" }");
-      }
     }
-    log_file2.print(" FINISH");*/
+    log_file2.print(" }FINISH");
     exit();
   }
 }
@@ -205,9 +210,17 @@ void genes2weights(float[] chromosome){
   out.setWeights(w3);
 }
 
+public static byte[] floatToByteArray(float value) {
+    int intBits =  Float.floatToIntBits(value);
+    return new byte[] {
+      (byte) (intBits >> 24), (byte) (intBits >> 16), (byte) (intBits >> 8), (byte) (intBits) };
+}
+
 void exit(){
   log_file.flush();
   log_file.close();
+  log_file2.flush();
+  log_file2.close();
   println("Archivo cerrado");
   super.exit();//let processing carry with it's regular exit routine
 }
