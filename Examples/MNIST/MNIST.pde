@@ -22,6 +22,10 @@ float [][] img_int;
 int [] num_int;
 int nImg;
 
+//Training
+int batch_size = 100;
+int last_img = 0;
+
 void setup(){
   size(800,400);
   imag = loadBytes("train-images.idx3-ubyte");
@@ -38,8 +42,6 @@ void setup(){
   println(num_int.length);
   println(num_int[0]);
   
-  print("imag.length: ");
-  println(imag.length);
   nImg = (imag.length - 16) / (28*28); 
   print("nImg: ");
   println(nImg);
@@ -49,15 +51,17 @@ void setup(){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
   }
- // print("img_int[0]: ");
-  //for (int i = 0; i < 784; i++){
-   // if (i % 28 == 0){
-   //   println();
-   // }
-   // print(img_int[1][i]);
-   // print(",");
- // println();
-  
+  /*
+  print("img_int[0]: ");
+  for (int i = 0; i < 784; i++){
+    if (i % 28 == 0){
+      println();
+    }
+    print(img_int[0][i]);
+    print(",");
+  }
+  println();
+  */
   
   
   model = new NN_Model();
@@ -83,6 +87,7 @@ void setup(){
 }
 
 void draw(){
+  /*
   PImage disp_img = createImage(28, 28, RGB);
   disp_img.loadPixels();
   for (int i = 0; i < disp_img.pixels.length; i++) {
@@ -91,26 +96,34 @@ void draw(){
   }
   disp_img.updatePixels();
   image(disp_img, 0, 0);
+  */
   
   generation++;
   print("Generation: ");
   println(generation);
- 
-//Evaluate
+  
+  //Evaluate
   for (Individual indiv: population.individuals){
     genes2weights(indiv.chromosome);
     float error = 0;
     flat++;
     print("Flat: ");
     println(flat);
-    for(int i = 0; i < nImg; i++) {
-      
+    
+    //Comprueba que hay un batch completo
+    //si no, comienza de nuevo
+    if (last_img + batch_size > nImg){
+      last_img = 0;
+    }
+    //Procesa el batch
+    for(int i = last_img; i < last_img + batch_size; i++) {
       in.setNeurons(img_int [i]);
       model.forward_prop();
       error += func_costo(out.neurons,num_int[i]);
     }
     error /= nImg;
     indiv.fitness = 1/error;
+    last_img = last_img + batch_size;
   }
   
   population.calculate_selection_probability();
@@ -151,11 +164,11 @@ void genes2weights(float[] chromosome){
   float [][] w3 = new float[neuout][neulay2];
   int i = 0;
   if(i < (neuin*neulay1)){
-    for (int j1 = 0; j1 < neulay1; j1++) {
-       for(int k1 = 0; k1 < neuin; k1++){
-         w1 [j1][k1] = chromosome[i];
-         i++;
-       }
+    for (int j1 = 0; j1 < neulay1; j1++){
+      for(int k1 = 0; k1 < neuin; k1++){
+        w1 [j1][k1] = chromosome[i];
+        i++;
+      }
     }
   }
   else if(i<(neuin*neulay1+neulay1*neulay2) && i>=(neuin*neulay1)){
