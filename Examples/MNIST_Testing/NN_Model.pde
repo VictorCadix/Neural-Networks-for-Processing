@@ -64,6 +64,10 @@ class NN_Model{
     log_file3.println("Secuencia " + seq+ ": Numero red: " + num + "\t" + "Probabilidad: " + prob + "\t" + "Numero Real: " + num_real);
   }
   
+  void sucess(int nImg, int suc){
+     log_file3.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
+  }
+  
   void exit1(){
     log_file.flush();
     log_file.close();
@@ -105,7 +109,7 @@ class NN_Model{
     return -1; 
   }
   
-  void genes2weights(float[] chromosome){
+  void genes2weights(float[] chromosome, int neulay1, int neulay2, int neuin, int neuout, Layer lay1, Layer lay2, Layer out){
   float [][] w1 = new float[neulay1][neuin];
   float [][] w2 = new float[neulay2][neulay1];
   float [][] w3 = new float[neuout][neulay2];
@@ -126,7 +130,7 @@ class NN_Model{
        }
     }
   }
-  if(i>=(neuin*neulay1+neulay1*neulay2) && i<nParameters){
+  if(i>=(neuin*neulay1+neulay1*neulay2) && i<(neuin*neulay1 + neulay1*neulay2 + neulay2*neuout)){
     for (int j3 = 0; j3 < neuout; j3++) {
        for(int k3 = 0; k3 < neulay2; k3++){
          w3 [j3][k3] = chromosome[i];
@@ -146,11 +150,11 @@ class NN_Model{
     while ((line = reader.readLine()) != null) {
       String [] w = split(line, TAB);
       float [] w_f = new float [w.length];
-      /*for(int i = 0; i < w.length; i++){
-        w_f[i] = float.valueOf(w[i]);
-      }*/
-      //println(Valueof(w));
-      genes2weights(float(w));
+      for(int i = 0; i < w.length; i++){
+        w_f[i] = Float.parseFloat(w[i]);
+      }
+      //printArray(w_f);
+      genes2weights(float(w), 18, 18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
     }
     reader.close();
   } catch (IOException e) {

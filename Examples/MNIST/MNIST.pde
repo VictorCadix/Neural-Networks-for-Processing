@@ -21,7 +21,7 @@ int [] num_int;
 int nImg;
 
 //Training
-int batch_size = 100;
+int batch_size = 300;
 int last_img = 0;
 
 void setup(){
@@ -98,7 +98,7 @@ void draw(){
   
   //Evaluate
   for (Individual indiv: population.individuals){
-    model.genes2weights(indiv.chromosome);
+    model.genes2weights(indiv.chromosome,neulay1,neulay2,neuin,neuout,lay1,lay2,out);
     float error = 0.0;
     
     //Comprueba que hay un batch completo
@@ -144,7 +144,7 @@ void draw(){
     population.individuals[i] = child[i];    
   }
   
-  if (generation == 20){
+  if (generation == 5){
     model.ParamsWeights(best, population);
     super.exit();//let processing carry with it's regular exit routine
   }

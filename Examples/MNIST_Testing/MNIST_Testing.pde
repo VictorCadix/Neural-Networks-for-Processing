@@ -3,8 +3,9 @@ InputLayer in;
 HiddenLayer lay1,lay2;
 OutputLayer out;
 int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
-int nParameters;
-
+int sum = 0;
+int nums = 0;
+float prob = 0.0;
 //Raw dataset
 byte [] imag,num;
 
@@ -44,7 +45,6 @@ void setup(){
   lay1 = new HiddenLayer(neulay1, in, "relu");
   lay2 = new HiddenLayer(neulay2, lay1, "relu");
   out = new OutputLayer(neuout, lay2, "sigmoid");
-  nParameters = neuin*neulay1 + neulay1*neulay2 + neulay2*neuout;
   
   model.addLayer(in);
   model.addLayer(lay1);
@@ -59,10 +59,15 @@ void setup(){
   for(int i = 0; i < nImg; i++){
     in.setNeurons(img_int [i]);
     model.forward_prop();
-    int num = out.numMNIST();
-    float prob = out.prob_numMNIST();
-    model.testFiles(i+1,num,prob,num_int[i]);
+    nums = out.numMNIST();
+    prob = out.prob_numMNIST();
+    model.testFiles(i+1,nums,prob,num_int[i]);
+    
+    if (nums == num_int[i]){
+      sum++;
+    }
   }
+  model.sucess(nImg, sum);
   model.exit2();
   super.exit();
 }

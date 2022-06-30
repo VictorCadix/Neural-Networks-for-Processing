@@ -56,7 +56,8 @@ class NN_Model{
     
     //log_file2.print("{");
     for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
-    log_file2.print(String.format("%.8f", pop.individuals[best].chromosome[i]));
+    //log_file2.print(String.format("%.8f", pop.individuals[best].chromosome[i]));
+    log_file2.print(pop.individuals[best].chromosome[i]);
     //log_file2.print(weights_byte[i]);
       if(i < (pop.individuals[best].chromosome_length-1)){
         log_file2.print("\t");
@@ -102,7 +103,7 @@ class NN_Model{
     return -1; 
   }
   
-  void genes2weights(float[] chromosome){
+  void genes2weights(float[] chromosome, int neulay1, int neulay2, int neuin, int neuout, Layer lay1, Layer lay2, Layer out){
   float [][] w1 = new float[neulay1][neuin];
   float [][] w2 = new float[neulay2][neulay1];
   float [][] w3 = new float[neuout][neulay2];
@@ -123,7 +124,7 @@ class NN_Model{
        }
     }
   }
-  if(i>=(neuin*neulay1+neulay1*neulay2) && i<nParameters){
+  if(i>=(neuin*neulay1+neulay1*neulay2) && i<(neuin*neulay1 + neulay1*neulay2 + neulay2*neuout)){
     for (int j3 = 0; j3 < neuout; j3++) {
        for(int k3 = 0; k3 < neulay2; k3++){
          w3 [j3][k3] = chromosome[i];
@@ -142,7 +143,7 @@ class NN_Model{
   try {
     while ((line = reader.readLine()) != null) {
       String[] w = split(line, TAB);
-      genes2weights(float(w));
+      genes2weights(float(w),18,18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
     }
     reader.close();
   } catch (IOException e) {
