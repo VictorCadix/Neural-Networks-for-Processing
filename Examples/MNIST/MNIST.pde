@@ -113,6 +113,7 @@ void draw(){
       error += func_costo(out.neurons,num_int[i]);
     }
     //error /= batch_size;
+    error += 0.001;
     indiv.fitness = 1/error;
     last_img = last_img + batch_size;
   }
@@ -143,7 +144,7 @@ void draw(){
     population.individuals[i] = child[i];    
   }
   
-  if (generation == 5){
+  if (generation == 20){
     model.ParamsWeights(best, population);
     super.exit();//let processing carry with it's regular exit routine
   }

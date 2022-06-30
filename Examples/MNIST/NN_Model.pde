@@ -1,7 +1,7 @@
 class NN_Model{
   ArrayList<Layer> layers;
   String loss_type;
-  PrintWriter log_file, log_file2;
+  PrintWriter log_file, log_file2, log_file3;
   
   NN_Model(){
     layers = new ArrayList<Layer>();
@@ -32,8 +32,15 @@ class NN_Model{
     
     String name2 ="WEIGHTS";
     log_file2 = createWriter("Data/" + name2 + ".txt");
-    log_file2.println("Weights best individual:");
+    //log_file2.println("Weights best individual:");
   }
+  
+  void creatFilesTest(){
+    String name = "TEST";
+    log_file3 = createWriter("Data/" + name + ".txt");
+    log_file3.println("Test MNIST:");
+  }
+  
   void saveParamsLoss(int generation, int best, Population pop){
     log_file.print(generation);
     log_file.print(":");
@@ -47,15 +54,16 @@ class NN_Model{
       weights_byte[i]= floatToByteArray(pop.individuals[best].chromosome[i]);
     }*/
     
-    log_file2.print("{");
+    //log_file2.print("{");
     for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
     log_file2.print(String.format("%.8f", pop.individuals[best].chromosome[i]));
     //log_file2.print(weights_byte[i]);
       if(i < (pop.individuals[best].chromosome_length-1)){
-        log_file2.print(" , ");
+        log_file2.print("\t");
       }
     }
-    log_file2.print(" }FINISH");
+    log_file2.println();
+    //log_file2.print(" }FINISH");
     exit();
   }
   
@@ -127,6 +135,20 @@ class NN_Model{
   lay2.setWeights(w2);
   out.setWeights(w3);
   }
+  
+  void readWeights() {
+  BufferedReader reader = createReader("C:\\Users\\david\\OneDrive\\Documentos\\GitHub\\Neural-Networks-for-Processing\\Examples\\MNIST\\Data\\WEIGHTS.txt");
+  String line = null;
+  try {
+    while ((line = reader.readLine()) != null) {
+      String[] w = split(line, TAB);
+      genes2weights(float(w));
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  } 
 
 }
 
