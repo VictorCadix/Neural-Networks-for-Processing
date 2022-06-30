@@ -11,7 +11,6 @@ float mutation_rate = 0.0001;
 int elitism = 0;
 
 float min_error;
-PrintWriter log_file, log_file2;
 int generation = 0;
 //Raw dataset
 byte [] imag,num;
@@ -77,16 +76,8 @@ void setup(){
   model.addLayer(lay2);
   model.addLayer(out);
   
-  model.printParams();
-  
-  String name = "log_" + str(nIndiv) + "i_" + str(mutation_rate) + "m_" + str(nCrossPoints) + "cp_"  + str(elitism) + "E_#";
-  log_file = createWriter("Data/" + name + ".txt");
-  log_file.println("Generation,best_fitness:");
-  
-  String name2 = "log_" + str(nIndiv) + "i_" + str(mutation_rate) + "m_" + str(nCrossPoints) + "cp_"  + str(elitism) + "E_#"+ "WEIGHTS";
-  log_file2 = createWriter("Data/" + name2 + ".txt");
-  log_file2.println("Weights best individual:");
-  
+  model.printParams(); 
+  model.creatFiles();
 }
 
 void draw(){
@@ -107,7 +98,7 @@ void draw(){
   
   //Evaluate
   for (Individual indiv: population.individuals){
-    genes2weights(indiv.chromosome);
+    model.genes2weights(indiv.chromosome);
     float error = 0.0;
     
     //Comprueba que hay un batch completo
@@ -131,10 +122,7 @@ void draw(){
   int best = population.getBetsIndiv();
   println(population.individuals[best].fitness);
   //System.out.println(String.format("%.5f", population.individuals[best].fitness));
-  
-  log_file.print(generation);
-  log_file.print(":");
-  log_file.println(population.individuals[best].fitness);
+  model.saveParamsLoss(generation, best, population);
   
   Individual child [] = new Individual [nIndiv];
   for (int i = 0; i < nIndiv; i++){
@@ -156,71 +144,7 @@ void draw(){
   }
   
   if (generation == 5){
-    
-    byte[][] weights_byte = new byte[population.individuals[best].chromosome_length][4];
-    
-    for(int i= 0; i < population.individuals[best].chromosome_length; i++){
-      weights_byte[i]= floatToByteArray(population.individuals[best].chromosome[i]);
-    }
-    
-    log_file2.print("{");
-    for(int i= 0; i < population.individuals[best].chromosome_length; i++){
-    //log_file2.print(String.format("%.8f", population.individuals[best].chromosome[i]));
-    log_file2.print(weights_byte[i]);
-      if(i < (population.individuals[best].chromosome_length-1)){
-        log_file2.print(" , ");
-      }
-    }
-    log_file2.print(" }FINISH");
-    exit();
+    model.ParamsWeights(best, population);
+    super.exit();//let processing carry with it's regular exit routine
   }
-}
-
-void genes2weights(float[] chromosome){
-  float [][] w1 = new float[neulay1][neuin];
-  float [][] w2 = new float[neulay2][neulay1];
-  float [][] w3 = new float[neuout][neulay2];
-  int i = 0;
-  if(i < (neuin*neulay1)){
-    for (int j1 = 0; j1 < neulay1; j1++){
-      for(int k1 = 0; k1 < neuin; k1++){
-        w1 [j1][k1] = chromosome[i];
-        i++;
-      }
-    } //<>//
-  }
-  if(i<(neuin*neulay1+neulay1*neulay2) && i>=(neuin*neulay1)){
-    for (int j2 = 0; j2 < neulay2; j2++) {
-       for(int k2 = 0; k2 < neulay1; k2++){
-         w2 [j2][k2] = chromosome[i];
-         i++;
-       }
-    }
-  }
-  if(i>=(neuin*neulay1+neulay1*neulay2) && i<nParameters){
-    for (int j3 = 0; j3 < neuout; j3++) {
-       for(int k3 = 0; k3 < neulay2; k3++){
-         w3 [j3][k3] = chromosome[i];
-         i++;
-       }
-    }
-  }
-  lay1.setWeights(w1);
-  lay2.setWeights(w2);
-  out.setWeights(w3);
-}
-
-public static byte[] floatToByteArray(float value) {
-    int intBits =  Float.floatToIntBits(value);
-    return new byte[] {
-      (byte) (intBits >> 24), (byte) (intBits >> 16), (byte) (intBits >> 8), (byte) (intBits) };
-}
-
-void exit(){
-  log_file.flush();
-  log_file.close();
-  log_file2.flush();
-  log_file2.close();
-  println("Archivo cerrado");
-  super.exit();//let processing carry with it's regular exit routine
-}
+} //<>//

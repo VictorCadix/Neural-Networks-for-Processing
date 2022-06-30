@@ -1,6 +1,7 @@
 class NN_Model{
   ArrayList<Layer> layers;
   String loss_type;
+  PrintWriter log_file, log_file2;
   
   NN_Model(){
     layers = new ArrayList<Layer>();
@@ -23,6 +24,49 @@ class NN_Model{
     }
   }
   
+  void creatFiles(){
+    //String name = "log_" + str(nIndiv) + "i_" + str(mutation_rate) + "m_" + str(nCrossPoints) + "cp_"  + str(elitism) + "E_#";
+    String name = "LOSS";
+    log_file = createWriter("Data/" + name + ".txt");
+    log_file.println("Generation,best_fitness:");
+    
+    String name2 ="WEIGHTS";
+    log_file2 = createWriter("Data/" + name2 + ".txt");
+    log_file2.println("Weights best individual:");
+  }
+  void saveParamsLoss(int generation, int best, Population pop){
+    log_file.print(generation);
+    log_file.print(":");
+    log_file.println(pop.individuals[best].fitness);
+  }
+  
+  void ParamsWeights(int best, Population pop){
+    /*byte[][] weights_byte = new byte[pop.individuals[best].chromosome_length][4];
+    
+    for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
+      weights_byte[i]= floatToByteArray(pop.individuals[best].chromosome[i]);
+    }*/
+    
+    log_file2.print("{");
+    for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
+    log_file2.print(String.format("%.8f", pop.individuals[best].chromosome[i]));
+    //log_file2.print(weights_byte[i]);
+      if(i < (pop.individuals[best].chromosome_length-1)){
+        log_file2.print(" , ");
+      }
+    }
+    log_file2.print(" }FINISH");
+    exit();
+  }
+  
+  void exit(){
+    log_file.flush();
+    log_file.close();
+    log_file2.flush();
+    log_file2.close();
+    println("Archivo cerrado");
+  }
+
   void setLoss(String loss_type){
     this.loss_type = loss_type;
   }
@@ -49,6 +93,41 @@ class NN_Model{
     println("ERROR: Loss_type missmatch");
     return -1; 
   }
+  
+  void genes2weights(float[] chromosome){
+  float [][] w1 = new float[neulay1][neuin];
+  float [][] w2 = new float[neulay2][neulay1];
+  float [][] w3 = new float[neuout][neulay2];
+  int i = 0;
+  if(i < (neuin*neulay1)){
+    for (int j1 = 0; j1 < neulay1; j1++){
+      for(int k1 = 0; k1 < neuin; k1++){
+        w1 [j1][k1] = chromosome[i];
+        i++;
+      }
+    }
+  }
+  if(i<(neuin*neulay1+neulay1*neulay2) && i>=(neuin*neulay1)){
+    for (int j2 = 0; j2 < neulay2; j2++) {
+       for(int k2 = 0; k2 < neulay1; k2++){
+         w2 [j2][k2] = chromosome[i];
+         i++;
+       }
+    }
+  }
+  if(i>=(neuin*neulay1+neulay1*neulay2) && i<nParameters){
+    for (int j3 = 0; j3 < neuout; j3++) {
+       for(int k3 = 0; k3 < neulay2; k3++){
+         w3 [j3][k3] = chromosome[i];
+         i++;
+       }
+    }
+  }
+  lay1.setWeights(w1);
+  lay2.setWeights(w2);
+  out.setWeights(w3);
+  }
+
 }
 
 
@@ -87,4 +166,10 @@ float func_costo(float z[],int want){
     costo += pow(z[i]-0, 2);  
   }
   return costo;
+}
+
+public static byte[] floatToByteArray(float value) {
+    int intBits =  Float.floatToIntBits(value);
+    return new byte[] {
+      (byte) (intBits >> 24), (byte) (intBits >> 16), (byte) (intBits >> 8), (byte) (intBits) };
 }
