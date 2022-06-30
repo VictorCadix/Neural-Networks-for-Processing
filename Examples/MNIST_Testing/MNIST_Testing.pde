@@ -57,7 +57,7 @@ void setup(){
   
 
   for(int i = 0; i < nImg; i++){
-    in.setNeurons(img_int [i]);
+    in.setNeurons(normalizacion(img_int [i]));
     model.forward_prop();
     nums = out.numMNIST();
     prob = out.prob_numMNIST();
