@@ -112,7 +112,7 @@ void draw(){
       model.forward_prop();
       error += func_costo(out.neurons,num_int[i]);
     }
-    //error /= batch_size;
+    error /= batch_size;
     //error += 0.001;
     indiv.fitness = 1/error;
     last_img = last_img + batch_size;
