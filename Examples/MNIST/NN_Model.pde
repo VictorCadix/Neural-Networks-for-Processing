@@ -41,38 +41,52 @@ class NN_Model{
     log_file3.println("Test MNIST:");
   }
   
+  void creatFilesValidation(){
+    String name = "VALIDATION";
+    log_file3 = createWriter("Data/" + name + ".txt");
+    log_file3.println("Validation MNIST:");
+  }
+  
   void saveParamsLoss(int generation, int best, Population pop){
     log_file.print(generation);
     log_file.print(":");
     log_file.println(pop.individuals[best].fitness);
   }
   
-  void ParamsWeights(int best, Population pop){
-    /*byte[][] weights_byte = new byte[pop.individuals[best].chromosome_length][4];
-    
-    for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
-      weights_byte[i]= floatToByteArray(pop.individuals[best].chromosome[i]);
-    }*/
-    
+  void ParamsWeights(int best, Population pop){ 
     //log_file2.print("{");
     for(int i= 0; i < pop.individuals[best].chromosome_length; i++){
-    //log_file2.print(String.format("%.8f", pop.individuals[best].chromosome[i]));
     log_file2.print(pop.individuals[best].chromosome[i]);
     //log_file2.print(weights_byte[i]);
       if(i < (pop.individuals[best].chromosome_length-1)){
         log_file2.print("\t");
       }
     }
-    log_file2.println();
     //log_file2.print(" }FINISH");
-    exit();
+    exit1();
   }
   
-  void exit(){
+  void testFiles(int generacion, int seq, int num, float prob, int num_real){
+    log_file3.println("Generacion: " + generacion + "\t" + "Secuencia: " + seq + "\t" + "Numero red: " + num + "\t" + "Probabilidad: " + prob + "\t" + "Numero Real: " + num_real);
+  }
+  
+  void sucess(int nImg, int suc){
+     log_file3.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
+     log_file3.println();
+     log_file3.println();
+  }
+  
+  void exit1(){
     log_file.flush();
     log_file.close();
     log_file2.flush();
     log_file2.close();
+    println("Archivo cerrado");
+  }
+  
+  void exit2(){
+    log_file3.flush();
+    log_file3.close();
     println("Archivo cerrado");
   }
 
@@ -142,8 +156,13 @@ class NN_Model{
   String line = null;
   try {
     while ((line = reader.readLine()) != null) {
-      String[] w = split(line, TAB);
-      genes2weights(float(w),18,18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
+      String [] w = split(line, TAB);
+      float [] w_f = new float [w.length];
+      for(int i = 0; i < w.length; i++){
+        w_f[i] = Float.parseFloat(w[i]);
+      }
+      //printArray(w_f);
+      genes2weights(float(w), 18, 18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
     }
     reader.close();
   } catch (IOException e) {

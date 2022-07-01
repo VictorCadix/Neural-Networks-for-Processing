@@ -17,12 +17,18 @@ byte [] imag,num;
 
 //Process dataset
 float [][] img_int;
+float [][] norm_img_int;
 int [] num_int;
 int nImg;
 
 //Training
 int batch_size = 100;
 int last_img = 0;
+
+//Validation
+int sum = 0;
+int nums = 0;
+float prob = 0.0;
 
 void setup(){
   //size(800,400);
@@ -44,10 +50,14 @@ void setup(){
   print("nImg: ");
   println(nImg);
   img_int = new float[nImg][28*28];
+  norm_img_int = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
+  }
+  for (int i = 0; i < nImg; i++) {
+    norm_img_int[i] = normalizacion(img_int[i]);
   }
   /*
   print("img_int[0]: ");
@@ -78,6 +88,7 @@ void setup(){
   
   model.printParams(); 
   model.creatFiles();
+  model.creatFilesValidation();
 }
 
 void draw(){
@@ -103,12 +114,12 @@ void draw(){
     
     //Comprueba que hay un batch completo
     //si no, comienza de nuevo
-    if (last_img + batch_size > nImg){
+    if (last_img + batch_size > (nImg - nImg/10)){
       last_img = 0;
     }
     //Procesa el batch
     for(int i = last_img; i < last_img + batch_size; i++) {
-      in.setNeurons(normalizacion(img_int [i]));
+      in.setNeurons(norm_img_int[i]);
       model.forward_prop();
       error += func_costo(out.neurons,num_int[i]);
     }
@@ -122,8 +133,26 @@ void draw(){
   
   int best = population.getBetsIndiv();
   println(population.individuals[best].fitness);
-  //System.out.println(String.format("%.5f", population.individuals[best].fitness));
   model.saveParamsLoss(generation, best, population);
+  
+  
+  //Validation
+  
+  model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
+  
+  for(int i = (nImg - nImg/10); i < nImg; i++){
+    in.setNeurons(norm_img_int[i]);
+    model.forward_prop();
+    nums = out.numMNIST();
+    prob = out.prob_numMNIST();
+    model.testFiles(generation, i+1,nums,prob,num_int[i]);
+    
+    if (nums == num_int[i]){
+      sum++;
+    }
+  }
+  model.sucess(nImg, sum);
+  
   
   Individual child [] = new Individual [nIndiv];
   for (int i = 0; i < nIndiv; i++){
@@ -146,6 +175,7 @@ void draw(){
   
   if (generation == 20){
     model.ParamsWeights(best, population);
+    model.exit2();
     super.exit();//let processing carry with it's regular exit routine
   }
 } //<>//

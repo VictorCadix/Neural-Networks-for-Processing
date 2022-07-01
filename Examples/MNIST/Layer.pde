@@ -100,14 +100,34 @@ class InputLayer extends Layer{
 }
 
 class OutputLayer extends Layer{
-  //float costo, error;
   
   OutputLayer(int nNeurons, Layer prev_Layer, String activation_type){
     super(nNeurons, prev_Layer, activation_type);
     layer_type = "output_layer";
-    //costo = func_costo(neurons, nNeurons, 4);
-    //error = mse(neurons, nNeurons, 4);
   }
+  
+  int numMNIST(){
+    int index = 0;
+    
+    for (int i = 1; i < nNeurons; i++){
+      if (neurons[i] > neurons[index]){
+        index = i;
+      }
+    }
+    return index;
+  }
+  
+  float prob_numMNIST(){
+    int index = 0;
+    
+    for (int i = 1; i < nNeurons; i++){
+      if (neurons[i] > neurons[index]){
+        index = i;
+      }
+    }
+    return neurons[index];
+  }
+  
 }
 
 class HiddenLayer extends Layer{
