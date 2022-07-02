@@ -11,6 +11,7 @@ byte [] imag,num;
 
 //Process dataset
 float [][] img_int;
+float [][] norm_img_int;
 int [] num_int;
 int nImg;
 
@@ -34,10 +35,14 @@ void setup(){
   print("nImg: ");
   println(nImg);
   img_int = new float[nImg][28*28];
+  norm_img_int = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
+  }
+  for (int i = 0; i < nImg; i++) {
+    norm_img_int[i] = normalizacion(img_int[i]);
   }
   
   model = new NN_Model();
@@ -57,7 +62,7 @@ void setup(){
   
 
   for(int i = 0; i < nImg; i++){
-    in.setNeurons(normalizacion(img_int [i]));
+    in.setNeurons(norm_img_int[i]);
     model.forward_prop();
     nums = out.numMNIST();
     prob = out.prob_numMNIST();

@@ -1,4 +1,5 @@
 
 Examples/MNIST/Data/*
+Examples/MNIST_Testing/Data/*
 Utils/*.txt
 Examples/MNIST_Testing/Data/*
