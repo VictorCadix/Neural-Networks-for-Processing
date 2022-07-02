@@ -141,14 +141,32 @@ void draw(){
       error += model.compute_loss(y_train[i]);
     }
     error /= batch_size;
+    
+    indiv.loss = error;
     indiv.fitness = 1/error;
   }
-  last_img = last_img + batch_size;
   
   population.calculate_selection_probability();
   
   int best = population.getBetsIndiv();
-  println(population.individuals[best].fitness);
+  
+  //accuracy
+  model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
+  sum = 0;
+  for(int i = last_img; i < last_img + batch_size; i++) {
+    in.setNeurons(x_train[i]);
+    model.forward_prop();
+    nums = out.numMNIST();
+    if (nums == num_int[i]){
+      sum++;
+    }
+  }
+  float accuracy = float(sum) / batch_size * 100;
+  print(population.individuals[best].loss);
+  println(" -> " + str(accuracy) + "%");
+  
+  last_img = last_img + batch_size;
+
   model.saveParamsLoss(generation, best, population);
   
   if (do_validation){
