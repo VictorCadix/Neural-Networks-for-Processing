@@ -18,6 +18,7 @@ byte [] imag,num;
 //Process dataset
 float [][] img_int;
 int [] num_int;
+float [][] y_train;
 int nImg;
 
 //Training
@@ -25,30 +26,43 @@ int batch_size = 100;
 int last_img = 0;
 
 void setup(){
-  //size(800,400);
+  size(800,400);
   imag = loadBytes("train-images.idx3-ubyte");
   num = loadBytes("train-labels.idx1-ubyte");
   
   num_int = new int[num.length - 8];
-  print("num.length: ");
-  println(num.length);
-  
   for (int i = 8 ; i < num.length; i++) {
     num_int [i-8] = (num [i] & 0xFF);
   }
   print("num_int.length: ");
   println(num_int.length);
-  println(num_int[0]);
   
   nImg = (imag.length - 16) / (28*28); 
   print("nImg: ");
   println(nImg);
+   
   img_int = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
   }
+  
+  //Normalize the data
+  for (int i = 0; i < nImg; i++){
+    img_int[i] = normalizacion(img_int [i]);
+  }
+  
+  //Create output vector
+  y_train = new float[nImg][10];
+  for (int i = 0 ; i < nImg; i++) {
+    int digit = num_int[i];
+    y_train[i][digit] = 1;
+  }
+  //print(num_int[0]);
+  //println(" -> to y_train");
+  //println(y_train[0]);
+  
   /*
   print("img_int[0]: ");
   for (int i = 0; i < 784; i++){
@@ -59,8 +73,7 @@ void setup(){
     print(",");
   }
   println();
-  */
-  
+  */  
   
   model = new NN_Model();
   in = new InputLayer(neuin);
@@ -75,6 +88,7 @@ void setup(){
   model.addLayer(lay1);
   model.addLayer(lay2);
   model.addLayer(out);
+  model.setLoss("mse");
   
   model.printParams(); 
   model.creatFiles();
@@ -108,11 +122,11 @@ void draw(){
     }
     //Procesa el batch
     for(int i = last_img; i < last_img + batch_size; i++) {
-      in.setNeurons(normalizacion(img_int [i]));
+      in.setNeurons(img_int [i]);
       model.forward_prop();
-      error += func_costo(out.neurons,num_int[i]);
+      error += model.compute_loss(y_train[i]);
     }
-    //error /= batch_size;
+    error /= batch_size;
     //error += 0.001;
     indiv.fitness = 1/error;
     last_img = last_img + batch_size;
@@ -144,7 +158,7 @@ void draw(){
     population.individuals[i] = child[i];    
   }
   
-  if (generation == 20){
+  if (generation == 100){
     model.ParamsWeights(best, population);
     super.exit();//let processing carry with it's regular exit routine
   }
