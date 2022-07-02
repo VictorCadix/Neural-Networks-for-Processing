@@ -25,7 +25,7 @@ int nImg;
 //Training
 int batch_size = 100;
 int last_img = 0;
-int maxGenerations = 1000;
+int maxGenerations = 10000;
 int epoch = 0;
 
 //Validation
@@ -89,7 +89,7 @@ void setup(){
   in = new InputLayer(neuin);
   lay1 = new HiddenLayer(neulay1, in, "relu");
   lay2 = new HiddenLayer(neulay2, lay1, "relu");
-  out = new OutputLayer(neuout, lay2, "sigmoid");
+  out = new OutputLayer(neuout, lay2, "softmax");
   
   nParameters = neuin*neulay1 + neulay1*neulay2 + neulay2*neuout;
   population = new Population(nIndiv, nParameters);
@@ -98,7 +98,7 @@ void setup(){
   model.addLayer(lay1);
   model.addLayer(lay2);
   model.addLayer(out);
-  model.setLoss("mse");
+  model.setLoss("categorical_crossentropy");
   
   model.printParams(); 
   model.creatFiles();

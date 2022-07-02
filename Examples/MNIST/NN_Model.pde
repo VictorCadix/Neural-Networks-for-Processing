@@ -28,6 +28,10 @@ class NN_Model{
       nParams += layer.nParameters;
     }
     println(nParams);
+    
+    print("Loss function: ");
+    println(loss_type);
+    println("----------------------");
   }
   
   void creatFiles(){
@@ -119,6 +123,10 @@ class NN_Model{
       float loss = mae(estimated, y_);
       return loss;
     }
+    else if (loss_type == "categorical_crossentropy"){
+      float loss = categorical_crossentropy(estimated, y_);
+      return loss;
+    }
     println("ERROR: Loss_type missmatch");
     return -1; 
   }
@@ -201,6 +209,15 @@ float mse(float[] z, float[]y_){
     mse += pow(z[i]-y_[i], 2);
   }
   return mse/n;
+}
+
+float categorical_crossentropy(float[] z, float[]y_){
+  float sum = 0; //<>//
+  int n = z.length;
+  for (int i = 0; i < n; i++){
+    sum += log(z[i]) * y_[i];
+  }
+  return -sum;
 }
 
 
