@@ -5,7 +5,7 @@ OutputLayer out;
 int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
 Population population;
 int nParameters;
-int nIndiv = 1000;
+int nIndiv = 100;
 int nCrossPoints = 1000;
 float mutation_rate = 0.0001;
 int elitism = 0;
@@ -17,16 +17,19 @@ byte [] imag,num;
 
 //Process dataset
 float [][] img_int;
-float [][] norm_img_int;
 int [] num_int;
+float [][] x_train;
 float [][] y_train;
 int nImg;
 
 //Training
 int batch_size = 100;
 int last_img = 0;
+int maxGenerations = 1000;
+int epoch = 0;
 
 //Validation
+boolean do_validation = false;
 int sum = 0;
 int nums = 0;
 float prob = 0.0;
@@ -48,7 +51,6 @@ void setup(){
   println(nImg);
    
   img_int = new float[nImg][28*28];
-  norm_img_int = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++) {
     for(int j = 0; j < 784; j++){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
@@ -56,8 +58,9 @@ void setup(){
   }
 
   //Normalize the data
+  x_train = new float[nImg][28*28];
   for (int i = 0; i < nImg; i++){
-    norm_img_int[i] = normalizacion(img_int [i]);
+    x_train[i] = normalizacion(img_int [i]);
   }
   
   //Create output vector
@@ -115,30 +118,32 @@ void draw(){
   */
   
   generation++;
-  print("Generation: ");
-  println(generation);
+  println("Generation: " + str(generation));
+  
+  //Comprueba que hay un batch completo
+  //si no, comienza de nuevo
+  if (last_img + batch_size > (nImg - nImg/10)){
+    last_img = 0;
+    epoch++;
+    println("Epoch " + str(epoch));
+    do_validation = true;
+  }
   
   //Evaluate
   for (Individual indiv: population.individuals){
     model.genes2weights(indiv.chromosome,neulay1,neulay2,neuin,neuout,lay1,lay2,out);
     float error = 0.0;
     
-    //Comprueba que hay un batch completo
-    //si no, comienza de nuevo
-    if (last_img + batch_size > (nImg - nImg/10)){
-      last_img = 0;
-    }
     //Procesa el batch
     for(int i = last_img; i < last_img + batch_size; i++) {
-      in.setNeurons(norm_img_int[i]);
+      in.setNeurons(x_train[i]);
       model.forward_prop();
       error += model.compute_loss(y_train[i]);
     }
     error /= batch_size;
-    //error += 0.001;
     indiv.fitness = 1/error;
-    last_img = last_img + batch_size;
   }
+  last_img = last_img + batch_size;
   
   population.calculate_selection_probability();
   
@@ -146,23 +151,24 @@ void draw(){
   println(population.individuals[best].fitness);
   model.saveParamsLoss(generation, best, population);
   
-  
-  //Validation
-  
-  model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
-  
-  for(int i = (nImg - nImg/10); i < nImg; i++){
-    in.setNeurons(norm_img_int[i]);
-    model.forward_prop();
-    nums = out.numMNIST();
-    prob = out.prob_numMNIST();
-    model.testFiles(generation, i+1,nums,prob,num_int[i]);
+  if (do_validation){
+    do_validation = false;
+    println("Validation");
+    model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
     
-    if (nums == num_int[i]){
-      sum++;
+    for(int i = (nImg - nImg/10); i < nImg; i++){
+      in.setNeurons(x_train[i]);
+      model.forward_prop();
+      nums = out.numMNIST();
+      prob = out.prob_numMNIST();
+      model.testFiles(generation, i+1,nums,prob,num_int[i]);
+      
+      if (nums == num_int[i]){
+        sum++;
+      }
     }
+    model.sucess(nImg, sum);
   }
-  model.sucess(nImg, sum);
   
   
   Individual child [] = new Individual [nIndiv];
@@ -184,9 +190,9 @@ void draw(){
     population.individuals[i] = child[i];    
   }
   
-  if (generation == 100){
+  if (generation == maxGenerations){
     model.ParamsWeights(best, population);
     model.exit2();
     super.exit();//let processing carry with it's regular exit routine
   }
-} //<>//
+}
