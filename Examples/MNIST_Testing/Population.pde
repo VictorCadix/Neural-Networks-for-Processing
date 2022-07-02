@@ -93,6 +93,7 @@ class Individual{
   int chromosome_length;
   float[] chromosome;
   float fitness;
+  float loss;
   
   float chr_min, chr_max;
   
