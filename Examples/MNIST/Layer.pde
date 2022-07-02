@@ -51,6 +51,9 @@ class Layer{
     else if (activ_type == "sigmoid"){
       neurons = sigmoide(neurons, nNeurons);
     }
+    else if (activ_type == "softmax"){
+      neurons = softmax(neurons, nNeurons);
+    }
     else{
       println("ERROR: No activation funcion selected");
     }
@@ -150,5 +153,17 @@ float [] relu (float z[],int n){
     for (int i = 0; i < n; i++){
       s[i] = max(0,z[i]);
     }
+  return s;
+}
+
+float [] softmax (float z[],int n){
+  float [] s = new float [n];
+  float sum = 0;
+  for (int i = 0; i < n; i++){
+    sum += exp(z[i]);
+  }
+  for (int i = 0; i < n; i++){
+    s[i] = exp(z[i]) / sum;
+  }
   return s;
 }
