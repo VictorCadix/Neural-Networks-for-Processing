@@ -5,6 +5,7 @@ class Layer{
   Layer prevLayer;
   String layer_type;
   String activ_type;
+  int nParameters = 0;
   
   Layer(int nNeurons, Layer prev_Layer, String activation_type){
     prevLayer = prev_Layer;
@@ -14,6 +15,7 @@ class Layer{
     layer_type = "";
     activ_type = activation_type;
     init();
+    nParameters = weights.length * weights[0].length;
   }
   
   Layer(int nNeurons){
@@ -81,13 +83,8 @@ class Layer{
     print("\tActivation function: ");
     println(activ_type);
     
-    //if(layer_type == "output_layer"){
-      //print("\tCost function: ");
-      //OutputLayer out = (OutputLayer)this;
-      //println(out.costo);
-      //print("\tMSE: ");
-      //println(out.error);
-    //}
+    print("\tNumber of parameters: ");
+    println(nParameters);
   }
 }
 

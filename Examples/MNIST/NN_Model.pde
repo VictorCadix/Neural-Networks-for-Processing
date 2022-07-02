@@ -22,6 +22,12 @@ class NN_Model{
       layer.printParams();
       i++;
     }
+    print("Total number of parameters: ");
+    int nParams = 0;
+    for(Layer layer : layers){
+      nParams += layer.nParameters;
+    }
+    println(nParams);
   }
   
   void creatFiles(){
@@ -49,7 +55,7 @@ class NN_Model{
   
   void saveParamsLoss(int generation, int best, Population pop){
     log_file.print(generation);
-    log_file.print(":");
+    log_file.print(",");
     log_file.println(pop.individuals[best].fitness);
   }
   
