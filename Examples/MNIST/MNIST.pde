@@ -20,6 +20,8 @@ float [][] img_int;
 int [] num_int;
 float [][] x_train;
 float [][] y_train;
+float [][] x_val;
+float [][] y_val;
 int nImg;
 
 //Training
@@ -29,7 +31,10 @@ int maxGenerations = 10000;
 int epoch = 0;
 
 //Validation
-boolean do_validation = false;
+float validation_sample = 0.1;
+int nSmples_train = 0;
+int nSmples_val = 0;
+boolean do_validation = true;
 int sum = 0;
 int nums = 0;
 float prob = 0.0;
@@ -56,19 +61,33 @@ void setup(){
       img_int [i][j] = (imag [(i*784)+j+16] & 0xFF);
     }
   }
+  
+  nSmples_train = int(nImg * (1 - validation_sample));
+  nSmples_val = int(nImg * validation_sample);
 
   //Normalize the data
-  x_train = new float[nImg][28*28];
-  for (int i = 0; i < nImg; i++){
+  x_train = new float[nSmples_train][28*28];
+  for (int i = 0; i < nSmples_train; i++){
     x_train[i] = normalizacion(img_int [i]);
+  }
+  x_val = new float[nSmples_val][28*28];
+  for (int i = 0; i < nSmples_val; i++){
+    x_val[i] = normalizacion(img_int [nSmples_train + i]);
   }
   
   //Create output vector
-  y_train = new float[nImg][10];
-  for (int i = 0 ; i < nImg; i++) {
+  y_train = new float[nSmples_train][10];
+  for (int i = 0 ; i < nSmples_train; i++) {
     int digit = num_int[i];
     y_train[i][digit] = 1;
   }
+  y_val = new float[nSmples_val][10];
+  for (int i = 0 ; i < nSmples_val; i++) {
+    int digit = num_int[nSmples_train + i];
+    y_train[i][digit] = 1;
+  }
+  
+  
   //print(num_int[0]);
   //println(" -> to y_train");
   //println(y_train[0]);
@@ -122,7 +141,7 @@ void draw(){
   
   //Comprueba que hay un batch completo
   //si no, comienza de nuevo
-  if (last_img + batch_size > (nImg - nImg/10)){
+  if (last_img + batch_size > (nSmples_train)){
     last_img = 0;
     epoch++;
     println("Epoch " + str(epoch));
@@ -171,20 +190,24 @@ void draw(){
   
   if (do_validation){
     do_validation = false;
-    println("Validation");
+    print("Validation");
     model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
-    
-    for(int i = (nImg - nImg/10); i < nImg; i++){
-      in.setNeurons(x_train[i]);
+    float error = 0;
+    for(int i = 0; i < nSmples_val; i++){
+      in.setNeurons(x_val[i]);
       model.forward_prop();
       nums = out.numMNIST();
       prob = out.prob_numMNIST();
       model.testFiles(generation, i+1,nums,prob,num_int[i]);
-      
       if (nums == num_int[i]){
         sum++;
       }
+      error += model.compute_loss(y_train[i]);
     }
+    error /= nSmples_val;
+    print(" : " + str(error));
+    accuracy = float(sum) / nSmples_val * 100;
+    println(" -> " + str(accuracy) + "%");
     model.sucess(nImg, sum);
   }
   
