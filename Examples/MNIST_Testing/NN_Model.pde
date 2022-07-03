@@ -158,31 +158,27 @@ class NN_Model{
   }
   
   void readWeights() {
-  BufferedReader reader = createReader("C:\\Users\\david\\OneDrive\\Documentos\\GitHub\\Neural-Networks-for-Processing\\Examples\\MNIST\\Data\\WEIGHTS.txt");
-  String line = null;
-  try {
-    while ((line = reader.readLine()) != null) {
-      String [] w = split(line, TAB);
-      float [] w_f = new float [w.length];
-      for(int i = 0; i < w.length; i++){
-        w_f[i] = Float.parseFloat(w[i]);
+    BufferedReader reader = createReader("Data\\WEIGHTS.txt");
+    String line = null;
+    try {
+      while ((line = reader.readLine()) != null) {
+        String [] w = split(line, TAB);
+        float [] w_f = new float [w.length];
+        for(int i = 0; i < w.length; i++){
+          w_f[i] = Float.parseFloat(w[i]);
+        }
+        //printArray(w_f);
+        genes2weights(float(w), 18, 18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
       }
-      //printArray(w_f);
-      genes2weights(float(w), 18, 18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
+      reader.close();
     }
-    reader.close();
-  } catch (IOException e) {
-    e.printStackTrace();
-  }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
   } 
 
 }
 
-
-//La capa de salida debe de calcular el costo de cada simulación. 
-//Para ello, se hace el cuadrado del valor que se obtiene en cada 
-//neurona de salida restando el valor que se desea obtener en cada 
-//una de estas neuronas
 
 float mae(float[] z, float[]y_){
   float mae = 0;
