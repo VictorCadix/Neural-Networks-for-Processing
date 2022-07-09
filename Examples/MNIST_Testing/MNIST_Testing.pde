@@ -66,7 +66,7 @@ void setup(){
     model.forward_prop();
     nums = out.numMNIST();
     prob = out.prob_numMNIST();
-    model.testFiles(i+1,nums,prob,num_int[i]);
+    model.testFiles(i+1,nums,prob,num_int[i], out);
     
     if (nums == num_int[i]){
       sum++;

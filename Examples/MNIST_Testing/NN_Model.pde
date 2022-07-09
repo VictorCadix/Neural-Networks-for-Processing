@@ -70,8 +70,17 @@ class NN_Model{
     exit1();
   }
   
-  void testFiles(int seq, int num, float prob, int num_real){
+  void testFiles(int seq, int num, float prob, int num_real, Layer out){
     log_file3.println("Secuencia " + seq+ ": Numero red: " + num + "\t" + "Probabilidad: " + prob + "\t" + "Numero Real: " + num_real);
+    log_file3.println("Neuronas de la capa de salida: ");
+    int n = out.neurons.length;
+    for (int i= 0; i < n; i++){
+      log_file3.print(i+1 + ": " + out.neurons[i] + "\t");
+      if(i == n-1){
+        log_file3.println();
+        log_file3.println();
+      }
+    }
   }
   
   void sucess(int nImg, int suc){
