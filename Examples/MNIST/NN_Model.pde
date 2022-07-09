@@ -115,6 +115,8 @@ class NN_Model{
   float compute_loss(float[] y_){
     int output_layer = layers.size() - 1;
     float[] estimated = layers.get(output_layer).neurons;
+    //print("Estinated: ");
+    //printArray(estimated);
     if (loss_type == "mse"){
       float loss = mse(estimated, y_);
       return loss;
@@ -215,8 +217,15 @@ float categorical_crossentropy(float[] z, float[]y_){
   float sum = 0; //<>//
   int n = z.length;
   for (int i = 0; i < n; i++){
-    sum += log(z[i]) * y_[i];
+    if (z[i] != 0.0){
+      sum += log(z[i]) * y_[i];
+    }
+    else{
+      sum += log(z[i] + 1e-30) * y_[i];   
+    }
+    //println("Z: " + z[i] + "Y: " + y_[i]);
   }
+  //println("SUM: " + sum);
   return -sum;
 }
 

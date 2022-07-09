@@ -158,9 +158,10 @@ void draw(){
       in.setNeurons(x_train[i]);
       model.forward_prop();
       error += model.compute_loss(y_train[i]);
+      //println ("ERROR:" + error);
     }
+    //println ("NEW");
     error /= batch_size;
-    
     indiv.loss = error;
     indiv.fitness = 1/error;
   }
