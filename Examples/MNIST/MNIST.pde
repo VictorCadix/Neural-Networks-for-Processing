@@ -181,6 +181,8 @@ void draw(){
     }
   }
   float accuracy = float(sum) / batch_size * 100;
+  println(best);
+  println(population.individuals[best].chromosome[8]);
   print(population.individuals[best].loss);
   println(" -> " + str(accuracy) + "%");
   

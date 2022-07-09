@@ -1,3 +1,5 @@
+import java.util.Random;
+
 class Population{
   int nIndividues;
   float mutation_rate;
@@ -108,14 +110,21 @@ class Individual{
     chr_max = max;
     
     for(int i = 0; i < chromosome_length; i++){
+      //randomSeed(max);
       chromosome [i] = random(min, max);
+      //chromosome [i] = numRandom(min, max);
+      //chromosome[i] = (float)min + rand.nextFloat((float)max);
     }
   }
   
   void addMutation(float mutation_rate){
     for(int i = 0; i < chromosome_length; i++){
       if (random(1) < mutation_rate){
+        //println("RA");
         chromosome [i] = random(chr_min, chr_max);
+      }
+      else{
+        //println("ME");
       }
     }
   }
@@ -127,4 +136,26 @@ class Individual{
     print("\t");
     println(fitness);
   }
+  
+  float numRandom (float min, float max)  {
+        boolean queesté;
+        float numLoteria[] = new float[chromosome_length];
+        float num = 0.0;
+        for (int pos = 0; pos < chromosome_length; pos++) {
+            do {
+                queesté = false;
+                num = (float)(Math.random() * max) + min;
+                for (int p = 0; p < pos; p++) {
+                    if (num == numLoteria[p]) {
+                        ////el número ya está
+                        queesté = true;
+                        break;
+                    }
+                }
+            } while (queesté == true);  
+    }
+    return num;
+   }
 }
+
+   
