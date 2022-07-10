@@ -6,7 +6,7 @@ int [] neu;
 Population population;
 int nParameters = 0;
 int nIndiv = 100;
-int nCrossPoints = 1000;
+int nCrossPoints = 100;
 float mutation_rate = 0.0001;
 int elitism = 0;
 
@@ -34,7 +34,7 @@ int epoch = 0;
 float validation_sample = 0.1;
 int nSmples_train = 0;
 int nSmples_val = 0;
-boolean do_validation = true;
+boolean do_validation = false;
 int sum = 0;
 int nums = 0;
 float prob = 0.0;
@@ -116,7 +116,7 @@ void setup(){
   for(int i = 0; i < (neu.length-1); i++){
     nParameters += neu[i]*neu[i+1];
   }
-  
+  //println(nParameters);
   population = new Population(nIndiv, nParameters);
   
   model.addLayer(in);
@@ -230,14 +230,17 @@ void draw(){
     
     //crossover
     child[i] = population.crossover(p1, p2, nCrossPoints);
-    
+    //println(child[i].chromosome[8]);
     //mutation
     child[i].addMutation(mutation_rate);
+    //println(child[i].chromosome[8]);
   }
   
   // Renew population
   for (int i = 0; i < nIndiv; i++){
-    population.individuals[i] = child[i];    
+    //println(population.individuals[i].chromosome[8]);
+    population.individuals[i] = child[i];  
+    //println(population.individuals[i].chromosome[8]);
   }
   
   if (generation == maxGenerations){

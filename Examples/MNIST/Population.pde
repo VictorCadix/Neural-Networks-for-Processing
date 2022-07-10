@@ -12,6 +12,7 @@ class Population{
     individuals = new Individual[nIndividues];
     for (int i = 0; i < nIndividues; i++){
       individuals[i] = new Individual(nParameters);
+      //println(individuals[i].chromosome[205]);
     }
     probability = new float[number_individues];
   }
@@ -58,14 +59,16 @@ class Population{
       int parent = (point % 2 == 0)? parent1 : parent2;
       
       int crossover_point = int(random(last_point, nParameters));
-      crossover_point = (crossover_point > nParameters)? nParameters : crossover_point;
+      crossover_point = (crossover_point >= (nParameters-1))? nParameters : crossover_point;
       
       for (int i = last_point; i < crossover_point; i++){
         child.chromosome[i] = individuals[parent].chromosome[i];
       }
       
       last_point = crossover_point;
+      //println(last_point);
       if (crossover_point == nParameters){
+        //println("BREAK");
         break;
       }
     }
