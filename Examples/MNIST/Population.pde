@@ -1,5 +1,3 @@
-import java.util.Random;
-
 class Population{
   int nIndividues;
   float mutation_rate;
@@ -145,25 +143,6 @@ class Individual{
     println(fitness);
   }
   
-  float numRandom (float min, float max)  {
-        boolean queesté;
-        float numLoteria[] = new float[chromosome_length];
-        float num = 0.0;
-        for (int pos = 0; pos < chromosome_length; pos++) {
-            do {
-                queesté = false;
-                num = (float)(Math.random() * max) + min;
-                for (int p = 0; p < pos; p++) {
-                    if (num == numLoteria[p]) {
-                        ////el número ya está
-                        queesté = true;
-                        break;
-                    }
-                }
-            } while (queesté == true);  
-    }
-    return num;
-   }
 }
 
    

@@ -105,7 +105,7 @@ class NN_Model{
   }
   
   void forward_prop(){
-    for (int i = 1; i < layers.size()-1; i++){
+    for (int i = 1; i < layers.size(); i++){
       Layer layer = layers.get(i);
       layer.compute_output();
       layer.activate();
@@ -122,7 +122,7 @@ class NN_Model{
   float compute_loss(float[] y_){
     int output_layer = layers.size() - 1;
     float[] estimated = layers.get(output_layer).neurons;
-    printArray(estimated);
+    //printArray(estimated);
     
     for(int i=0; i<estimated.length;i++){
       if (Float.isNaN(estimated[i])){
