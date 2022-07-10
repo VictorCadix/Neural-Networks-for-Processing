@@ -105,17 +105,32 @@ class NN_Model{
   }
   
   void forward_prop(){
-    for (int i = 1; i < layers.size(); i++){
+    for (int i = 1; i < layers.size()-1; i++){
       Layer layer = layers.get(i);
       layer.compute_output();
       layer.activate();
+      /*for(int j = 0; j < layer.nNeurons; j++){
+      if (Float.isNaN(layer.neurons[j])){
+         print("Capa: " + i);
+         print("Neurona: ");
+        print(layer.neurons[j]);
+      }
+      }*/
     }
   }
   
   float compute_loss(float[] y_){
     int output_layer = layers.size() - 1;
     float[] estimated = layers.get(output_layer).neurons;
-    //print("Estinated: ");
+    printArray(estimated);
+    
+    for(int i=0; i<estimated.length;i++){
+      if (Float.isNaN(estimated[i])){
+         print("Estimated: ");
+        printArray(estimated);
+      }
+    }
+
     //printArray(estimated);
     if (loss_type == "mse"){
       float loss = mse(estimated, y_);
@@ -169,8 +184,11 @@ float mae(float[] z, float[]y_){
   int n = z.length;
   for (int i = 0; i < n; i++){
     mae += abs(z[i]-y_[i]);
-
-  }
+    //if (Float.isNaN(mae)){
+    //println("Z: " + z[i] + "Y: " + y_[i]);
+    //println("MAE: " + mae);}
+  //}
+}
   return mae/n;
 }
 
@@ -191,8 +209,9 @@ float categorical_crossentropy(float[] z, float[]y_){
       sum += log(z[i]) * y_[i];
     }
     else{
-      sum += log(z[i] + 1e-30) * y_[i];   
+      sum += log(1e-30) * y_[i];
     }
+    //println("SUM: " + sum);
     //println("Z: " + z[i] + "Y: " + y_[i]);
   }
   //println("SUM: " + sum);

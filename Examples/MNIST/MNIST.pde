@@ -6,7 +6,7 @@ int [] neu;
 Population population;
 int nParameters = 0;
 int nIndiv = 100;
-int nCrossPoints = 100;
+int nCrossPoints = 10000;
 float mutation_rate = 0.0001;
 int elitism = 0;
 
@@ -27,7 +27,7 @@ int nImg;
 //Training
 int batch_size = 100;
 int last_img = 0;
-int maxGenerations = 100;
+int maxGenerations = 3;
 int epoch = 0;
 
 //Validation
@@ -123,7 +123,7 @@ void setup(){
   model.addLayer(lay1);
   model.addLayer(lay2);
   model.addLayer(out);
-  model.setLoss("categorical_crossentropy");
+  model.setLoss("mae");
   
   model.printParams(); 
   model.creatFiles();
@@ -153,7 +153,7 @@ void draw(){
     println("Epoch " + str(epoch));
     do_validation = true;
   }
-  
+  int flat = 0;
   //Evaluate
   for (Individual indiv: population.individuals){
     model.genes2weights(indiv.chromosome, neu, model);
@@ -164,12 +164,14 @@ void draw(){
       in.setNeurons(x_train[i]);
       model.forward_prop();
       error += model.compute_loss(y_train[i]);
-      //println ("ERROR:" + error);
     }
     //println ("NEW");
+    //println("ERROR: " + error);
     error /= batch_size;
     indiv.loss = error;
     indiv.fitness = 1/error;
+    //flat++;
+    //println("INDIVIDUO: " +  flat +"FIT: " + indiv.fitness);
   }
   
   population.calculate_selection_probability();
@@ -225,12 +227,13 @@ void draw(){
   for (int i = 0; i < nIndiv; i++){
     int p1 = population.get_parent();
     int p2 = population.get_parent();
-    
+    //println("Individuo: " + i);
+    //println("Cromosoma del indv " + i + " de la poblacion: " + population.individuals[i].chromosome[8]);
     //println(str(p1) + ":" + str(p2));
     
     //crossover
     child[i] = population.crossover(p1, p2, nCrossPoints);
-    //println(child[i].chromosome[8]);
+    //println("Cromosoma del hijo: " + child[i].chromosome[8]);
     //mutation
     child[i].addMutation(mutation_rate);
     //println(child[i].chromosome[8]);

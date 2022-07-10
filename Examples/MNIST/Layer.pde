@@ -43,6 +43,11 @@ class Layer{
         sum += weights[i][j] * prevLayer.neurons[j];
       }
       neurons[i] = sum;
+       //print("HEY");
+      /*if (Float.isNaN(neurons[i])){
+         print("Neurona: ");
+        print(neurons[i]);
+      }*/
     }
   }
   

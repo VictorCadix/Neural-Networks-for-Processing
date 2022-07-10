@@ -31,8 +31,10 @@ class Population{
   
   int get_parent() {
     float target = random(100);
+    //println("Random: " + target);
     float accum_prob = 0;
     for (int i = 0; i < nIndividues; i++) {
+      //println("Accum: " + accum_prob);
       accum_prob += probability[i];
       if (accum_prob >= target) {
         return i;
@@ -58,13 +60,16 @@ class Population{
     for (int point = 0; point < nPoints; point++){
       int parent = (point % 2 == 0)? parent1 : parent2;
       
-      int crossover_point = int(random(last_point, nParameters));
+      int crossover_point = int(random(last_point, last_point + 200));
       crossover_point = (crossover_point >= (nParameters-1))? nParameters : crossover_point;
       
       for (int i = last_point; i < crossover_point; i++){
         child.chromosome[i] = individuals[parent].chromosome[i];
+        //if ( i == 8){
+          //println("Cromosoma 8 del padre: " + individuals[parent].chromosome[8]);
+          //println("Cromosoma 8 del hijo: " + child.chromosome[8]);
+        //}
       }
-      
       last_point = crossover_point;
       //println(last_point);
       if (crossover_point == nParameters){
