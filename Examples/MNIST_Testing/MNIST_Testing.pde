@@ -2,7 +2,7 @@ NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
 OutputLayer out;
-int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
+int [] neu;
 int sum = 0;
 int nums = 0;
 float prob = 0.0;
@@ -46,10 +46,13 @@ void setup(){
   }
   
   model = new NN_Model();
-  in = new InputLayer(neuin);
-  lay1 = new HiddenLayer(neulay1, in, "relu");
-  lay2 = new HiddenLayer(neulay2, lay1, "relu");
-  out = new OutputLayer(neuout, lay2, "sigmoid");
+  neu = new int [4];
+  neu[0] = 784; neu[1] = 18; neu[2] = 18; neu[3]= 10;
+  
+  in = new InputLayer(neu[0]);
+  lay1 = new HiddenLayer(neu[1], in, "relu");
+  lay2 = new HiddenLayer(neu[2], lay1, "relu");
+  out = new OutputLayer(neu[3], lay2, "softmax");
   
   model.addLayer(in);
   model.addLayer(lay1);
@@ -57,7 +60,7 @@ void setup(){
   model.addLayer(out);
   
   model.printParams();
-  model.readWeights();
+  model.readWeights(neu, model);
   model.creatFilesTest();
   
 

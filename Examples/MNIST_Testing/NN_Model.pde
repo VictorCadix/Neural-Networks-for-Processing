@@ -132,41 +132,31 @@ class NN_Model{
     return -1; 
   }
   
-  void genes2weights(float[] chromosome, int neulay1, int neulay2, int neuin, int neuout, Layer lay1, Layer lay2, Layer out){
-  float [][] w1 = new float[neulay1][neuin];
-  float [][] w2 = new float[neulay2][neulay1];
-  float [][] w3 = new float[neuout][neulay2];
+  void genes2weights(float[] chromosome, int [] neu, NN_Model mod){
+  float [][][] w = new float[neu.length-1] [] [];
+  for(int n = 0; n < (neu.length-1); n++){
+    w[n] = new float[neu[n+1]] [neu[n]];
+  }
+  
   int i = 0;
-  if(i < (neuin*neulay1)){
-    for (int j1 = 0; j1 < neulay1; j1++){
-      for(int k1 = 0; k1 < neuin; k1++){
-        w1 [j1][k1] = chromosome[i];
+  int [] j = new int [neu.length-1];
+  int [] k = new int [neu.length-1];
+  
+  for(int l = 0; l < (neu.length-1); l++){
+    for (j[l] = 0; j[l] < neu[l+1]; j[l]++){
+      for(k[l] = 0; k[l] < neu[l]; k[l]++){
+        w [l] [j[l]][k[l]] = chromosome[i];
         i++;
       }
     }
   }
-  if(i<(neuin*neulay1+neulay1*neulay2) && i>=(neuin*neulay1)){
-    for (int j2 = 0; j2 < neulay2; j2++) {
-       for(int k2 = 0; k2 < neulay1; k2++){
-         w2 [j2][k2] = chromosome[i];
-         i++;
-       }
-    }
+  //println(i);
+  for(int m = 0; m < (neu.length-1); m++){
+    mod.layers.get(m+1).setWeights(w[m]);
   }
-  if(i>=(neuin*neulay1+neulay1*neulay2) && i<(neuin*neulay1 + neulay1*neulay2 + neulay2*neuout)){
-    for (int j3 = 0; j3 < neuout; j3++) {
-       for(int k3 = 0; k3 < neulay2; k3++){
-         w3 [j3][k3] = chromosome[i];
-         i++;
-       }
-    }
-  }
-  lay1.setWeights(w1);
-  lay2.setWeights(w2);
-  out.setWeights(w3);
   }
   
-  void readWeights() {
+  void readWeights(int [] neu, NN_Model mod) {
     BufferedReader reader = createReader("Data\\WEIGHTS.txt");
     String line = null;
     try {
@@ -177,7 +167,7 @@ class NN_Model{
           w_f[i] = Float.parseFloat(w[i]);
         }
         //printArray(w_f);
-        genes2weights(float(w), 18, 18, 784, 10, layers.get(1), layers.get(2), layers.get(3));
+        genes2weights(float(w), neu, mod);
       }
       reader.close();
     }

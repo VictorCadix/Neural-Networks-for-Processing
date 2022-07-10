@@ -2,9 +2,9 @@ NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
 OutputLayer out;
-int neuin = 784, neulay1 = 18, neulay2 = 18, neuout = 10;
+int [] neu;
 Population population;
-int nParameters;
+int nParameters = 0;
 int nIndiv = 100;
 int nCrossPoints = 1000;
 float mutation_rate = 0.0001;
@@ -105,12 +105,18 @@ void setup(){
   */  
   
   model = new NN_Model();
-  in = new InputLayer(neuin);
-  lay1 = new HiddenLayer(neulay1, in, "relu");
-  lay2 = new HiddenLayer(neulay2, lay1, "relu");
-  out = new OutputLayer(neuout, lay2, "softmax");
+  neu = new int [4];
+  neu[0] = 784; neu[1] = 18; neu[2] = 18; neu[3]= 10;
   
-  nParameters = neuin*neulay1 + neulay1*neulay2 + neulay2*neuout;
+  in = new InputLayer(neu[0]);
+  lay1 = new HiddenLayer(neu[1], in, "relu");
+  lay2 = new HiddenLayer(neu[2], lay1, "relu");
+  out = new OutputLayer(neu[3], lay2, "softmax");
+  
+  for(int i = 0; i < (neu.length-1); i++){
+    nParameters += neu[i]*neu[i+1];
+  }
+  
   population = new Population(nIndiv, nParameters);
   
   model.addLayer(in);
@@ -150,7 +156,7 @@ void draw(){
   
   //Evaluate
   for (Individual indiv: population.individuals){
-    model.genes2weights(indiv.chromosome,neulay1,neulay2,neuin,neuout,lay1,lay2,out);
+    model.genes2weights(indiv.chromosome, neu, model);
     float error = 0.0;
     
     //Procesa el batch
@@ -171,7 +177,7 @@ void draw(){
   int best = population.getBetsIndiv();
   
   //accuracy
-  model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
+  model.genes2weights(population.individuals[best].chromosome, neu, model);
   sum = 0;
   for(int i = last_img; i < last_img + batch_size; i++) {
     in.setNeurons(x_train[i]);
@@ -194,7 +200,7 @@ void draw(){
   if (do_validation){
     do_validation = false;
     print("Validation");
-    model.genes2weights(population.individuals[best].chromosome, neulay1, neulay2, neuin, neuout,lay1,lay2,out);
+    model.genes2weights(population.individuals[best].chromosome, neu, model);
     float error = 0;
     for(int i = 0; i < nSmples_val; i++){
       in.setNeurons(x_val[i]);
