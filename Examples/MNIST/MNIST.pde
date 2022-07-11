@@ -118,6 +118,7 @@ void setup(){
   }
   //println(nParameters);
   population = new Population(nIndiv, nParameters);
+  population.crossover_type = "multiple_random";
   
   model.addLayer(in);
   model.addLayer(lay1);

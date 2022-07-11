@@ -1,3 +1,4 @@
+
 class Population{
   int nIndividues;
   float mutation_rate;
@@ -5,14 +6,18 @@ class Population{
   Individual[] individuals;
   float[] probability;
   
+  String crossover_type = "";
+  
   Population(int number_individues, int nParameters){
     nIndividues = number_individues;
     individuals = new Individual[nIndividues];
     for (int i = 0; i < nIndividues; i++){
       individuals[i] = new Individual(nParameters);
-      //println(individuals[i].chromosome[205]);
     }
     probability = new float[number_individues];
+    
+    //defaults
+    crossover_type = "one_point";
   }
   
   void calculate_selection_probability() {
@@ -29,10 +34,8 @@ class Population{
   
   int get_parent() {
     float target = random(100);
-    //println("Random: " + target);
     float accum_prob = 0;
     for (int i = 0; i < nIndividues; i++) {
-      //println("Accum: " + accum_prob);
       accum_prob += probability[i];
       if (accum_prob >= target) {
         return i;
@@ -49,31 +52,58 @@ class Population{
   }
   
   Individual crossover(int parent1, int parent2, int nPoints){
+    Individual child = new Individual(nParameters);
+    if (crossover_type == "multiple_random"){
+      child = multiple_random_crossover(parent1, parent2, nPoints);
+    }
+    else if (crossover_type == "one_point"){
+      child = one_point_crossover(parent1, parent2);
+    }
+    else{
+      println("crossover_type ERROR");
+    }
+    return child;
+  }
+  
+  Individual multiple_random_crossover(int parent1, int parent2, int nPoints){
     int nParameters = individuals[parent1].chromosome_length;
     Individual child = new Individual(nParameters);
-    
-    //one-point crossover for nPoints=1
+
+    int chunk_size = nParameters / nPoints;
     int last_point = 0;
     
     for (int point = 0; point < nPoints; point++){
       int parent = (point % 2 == 0)? parent1 : parent2;
       
-      int crossover_point = int(random(last_point, last_point + 200));
-      crossover_point = (crossover_point >= (nParameters-1))? nParameters : crossover_point;
+      int crossover_point = round(random(last_point, (point+1) * chunk_size));
+      //crossover_point = (crossover_point >= nParameters-1)? nParameters : crossover_point;
       
       for (int i = last_point; i < crossover_point; i++){
         child.chromosome[i] = individuals[parent].chromosome[i];
-        //if ( i == 8){
-          //println("Cromosoma 8 del padre: " + individuals[parent].chromosome[8]);
-          //println("Cromosoma 8 del hijo: " + child.chromosome[8]);
-        //}
       }
       last_point = crossover_point;
-      //println(last_point);
+      
       if (crossover_point == nParameters){
-        //println("BREAK");
         break;
       }
+    }
+    for (int i = last_point; i < nParameters; i++){
+      child.chromosome[i] = individuals[parent2].chromosome[i];
+    }
+    return child;
+  }
+  
+  Individual one_point_crossover(int parent1, int parent2){
+    int nParameters = individuals[parent1].chromosome_length;
+    Individual child = new Individual(nParameters);
+    
+    int crossover_point = round(random(0, nParameters));
+    
+    for (int i = 0; i < crossover_point; i++){
+      child.chromosome[i] = individuals[parent1].chromosome[i];
+    }
+    for (int i = crossover_point; i < nParameters; i++){
+      child.chromosome[i] = individuals[parent2].chromosome[i];
     }
     return child;
   }
@@ -91,6 +121,7 @@ class Population{
   
   void printReport(){
     for (int i = 0; i < nIndividues; i++){
+      print("[" + str(i) + "] ");
       individuals[i].printReport();
     }
   }
@@ -116,21 +147,14 @@ class Individual{
     chr_max = max;
     
     for(int i = 0; i < chromosome_length; i++){
-      //randomSeed(max);
       chromosome [i] = random(min, max);
-      //chromosome [i] = numRandom(min, max);
-      //chromosome[i] = (float)min + rand.nextFloat((float)max);
     }
   }
   
   void addMutation(float mutation_rate){
     for(int i = 0; i < chromosome_length; i++){
       if (random(1) < mutation_rate){
-        //println("RA");
         chromosome [i] = random(chr_min, chr_max);
-      }
-      else{
-        //println("ME");
       }
     }
   }
@@ -139,10 +163,7 @@ class Individual{
     for(int i = 0; i < chromosome_length; i++){
       print(str(chromosome [i]) + " ");
     }
-    print("\t");
+    print("-> ");
     println(fitness);
   }
-  
 }
-
-   
