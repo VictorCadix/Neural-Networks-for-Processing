@@ -38,7 +38,7 @@ class NN_Model{
     //String name = "log_" + str(nIndiv) + "i_" + str(mutation_rate) + "m_" + str(nCrossPoints) + "cp_"  + str(elitism) + "E_#";
     String name = "LOSS";
     log_file = createWriter("Data/" + name + ".txt");
-    log_file.println("Generation,best_fitness:");
+    log_file.println("Generation,best_fitness");
     
     String name2 ="WEIGHTS";
     log_file2 = createWriter("Data/" + name2 + ".txt");
