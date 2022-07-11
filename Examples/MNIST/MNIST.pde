@@ -5,7 +5,7 @@ OutputLayer out;
 int [] neu;
 Population population;
 int nParameters = 0;
-int nIndiv = 100;
+int nIndiv = 1000;
 int nCrossPoints = 10000;
 float mutation_rate = 0.0001;
 int elitism = 0;
@@ -25,9 +25,9 @@ float [][] y_val;
 int nImg;
 
 //Training
-int batch_size = 100;
+int batch_size = 600;
 int last_img = 0;
-int maxGenerations = 3;
+int maxGenerations = 100;
 int epoch = 0;
 
 //Validation
@@ -154,7 +154,7 @@ void draw(){
     println("Epoch " + str(epoch));
     do_validation = true;
   }
-  int flat = 0;
+  //int flat = 0;
   //Evaluate
   for (Individual indiv: population.individuals){
     model.genes2weights(indiv.chromosome, neu, model);

@@ -108,14 +108,15 @@ class NN_Model{
     for (int i = 1; i < layers.size(); i++){
       Layer layer = layers.get(i);
       layer.compute_output();
+      
       layer.activate();
       /*for(int j = 0; j < layer.nNeurons; j++){
       if (Float.isNaN(layer.neurons[j])){
-         print("Capa: " + i);
-         print("Neurona: ");
-        print(layer.neurons[j]);
+         println("Capa: " + i);
+         println("Neurona: " + j);
+        println(layer.neurons[j]);
       }
-      }*/
+      }//*/
     }
   }
   
@@ -124,12 +125,12 @@ class NN_Model{
     float[] estimated = layers.get(output_layer).neurons;
     //printArray(estimated);
     
-    for(int i=0; i<estimated.length;i++){
+    /*for(int i=0; i<estimated.length;i++){
       if (Float.isNaN(estimated[i])){
          print("Estimated: ");
         printArray(estimated);
       }
-    }
+    }*/
 
     //printArray(estimated);
     if (loss_type == "mse"){

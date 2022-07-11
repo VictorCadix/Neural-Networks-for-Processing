@@ -163,9 +163,21 @@ float [] softmax (float z[],int n){
   float sum = 0;
   for (int i = 0; i < n; i++){
     sum += exp(z[i]);
+    if (sum> 1e38){
+      sum = 1e38;
+         /*println("EXP:" + exp(z[i]));
+         println("SUMA: " + sum);
+         println("Z: " + z[i]);*/
+      }
   }
   for (int i = 0; i < n; i++){
     s[i] = exp(z[i]) / sum;
+    /*if (Float.isNaN(s[i])){
+         println("Neurona:" + i);
+         println(s[i]);
+         println("SUMA: " + sum);
+         println("Z: " + z[i]);
+      }*/
   }
   return s;
 }
