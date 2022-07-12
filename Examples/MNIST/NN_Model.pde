@@ -206,12 +206,7 @@ float categorical_crossentropy(float[] z, float[]y_){
   float sum = 0; //<>//
   int n = z.length;
   for (int i = 0; i < n; i++){
-    if (z[i] != 0.0){
-      sum += log(z[i]) * y_[i];
-    }
-    else{
-      sum += log(1e-30) * y_[i];
-    }
+    sum += log(z[i] + 1e-30) * y_[i];
     //println("SUM: " + sum);
     //println("Z: " + z[i] + "Y: " + y_[i]);
   }
