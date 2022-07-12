@@ -177,22 +177,25 @@ void draw(){
   
   population.calculate_selection_probability();
   
+  //metrics
   int best = population.getBetsIndiv();
-  
-  //accuracy
   model.genes2weights(population.individuals[best].chromosome, neu, model);
   sum = 0;
+  float mse_ = 0;
   for(int i = last_img; i < last_img + batch_size; i++) {
     in.setNeurons(x_train[i]);
     model.forward_prop();
+    //mse
+    mse_ += mse(model.layers.get(model.layers.size()-1).neurons, y_train[i]);
+    //accuracy
     nums = out.numMNIST();
     if (nums == num_int[i]){
       sum++;
     }
   }
-  float accuracy = float(sum) / batch_size * 100;
+  float accuracy = float(sum) / batch_size;
   print(population.individuals[best].loss);
-  println(" -> " + str(accuracy) + "%");
+  println(" -> " + str(accuracy*100) + "% " + "mse: " + str(mse_ / batch_size));
   
   last_img = last_img + batch_size;
 
