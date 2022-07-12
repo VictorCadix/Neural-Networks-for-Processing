@@ -5,8 +5,8 @@ OutputLayer out;
 int [] neu;
 Population population;
 int nParameters = 0;
-int nIndiv = 1000;
-int nCrossPoints = 10000;
+int nIndiv = 100;
+int nCrossPoints = 1000;
 float mutation_rate = 0.0001;
 int elitism = 0;
 
@@ -25,9 +25,9 @@ float [][] y_val;
 int nImg;
 
 //Training
-int batch_size = 600;
+int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 100;
+int maxGenerations = 10000;
 int epoch = 0;
 
 //Validation
@@ -124,7 +124,7 @@ void setup(){
   model.addLayer(lay1);
   model.addLayer(lay2);
   model.addLayer(out);
-  model.setLoss("mae");
+  model.setLoss("categorical_crossentropy");
   
   model.printParams(); 
   model.creatFiles();
@@ -191,8 +191,6 @@ void draw(){
     }
   }
   float accuracy = float(sum) / batch_size * 100;
-  println(best);
-  println(population.individuals[best].chromosome[8]);
   print(population.individuals[best].loss);
   println(" -> " + str(accuracy) + "%");
   
