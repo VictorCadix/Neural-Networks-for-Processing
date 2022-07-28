@@ -1,7 +1,7 @@
 class NN_Model{
   ArrayList<Layer> layers;
   String loss_type;
-  PrintWriter log_file, log_file2, log_file3;
+  PrintWriter log_file, log_file2, log_file3, log_file4;
   
   NN_Model(){
     layers = new ArrayList<Layer>();
@@ -53,8 +53,8 @@ class NN_Model{
   
   void creatFilesValidation(){
     String name = "VALIDATION";
-    log_file3 = createWriter("Data/" + name + ".txt");
-    log_file3.println("Validation MNIST:");
+    log_file4 = createWriter("Data/" + name + ".txt");
+    log_file4.println("Validation MNIST:");
   }
   
   void saveParamsLoss(int generation, int best, Population pop){
@@ -81,23 +81,33 @@ class NN_Model{
   }
   
   void sucess(int nImg, int suc){
-     log_file3.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
-     log_file3.println();
-     log_file3.println();
+     log_file4.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
+     log_file4.println();
+     log_file4.println();
   }
   
   void exit1(){
     log_file.flush();
     log_file.close();
-    log_file2.flush();
-    log_file2.close();
-    println("Archivo cerrado");
+    println("Archivo 1 cerrado");
   }
   
   void exit2(){
+    log_file2.flush();
+    log_file2.close();
+    println("Archivo 2 cerrado");
+  }
+  
+  void exit3(){
     log_file3.flush();
     log_file3.close();
-    println("Archivo cerrado");
+    println("Archivo 3 cerrado");
+  }
+  
+  void exit4(){
+    log_file4.flush();
+    log_file4.close();
+    println("Archivo 4 cerrado");
   }
 
   void setLoss(String loss_type){

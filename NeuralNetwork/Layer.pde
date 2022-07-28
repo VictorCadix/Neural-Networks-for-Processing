@@ -1,12 +1,22 @@
-class Layer{
+package NeuralNetwork;
+
+import processing.core.*;
+import processing.core.PApplet;
+
+public class Layer{
+  // The parent Processing applet
+  protected final PApplet parent;
+    
   float[][] weights;
   float [] neurons;
   int nNeurons;
-  Layer prevLayer;
-  String layer_type;
-  String activ_type;
+  public Layer prevLayer;
+  public String layer_type;
+  public String activ_type;
+  int nParameters = 0;
   
-  Layer(int nNeurons, Layer prev_Layer, String activation_type){
+  public Layer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
+    this.parent = parent;
     prevLayer = prev_Layer;
     this.nNeurons = nNeurons;
     weights = new float[nNeurons][prevLayer.nNeurons];
@@ -14,26 +24,25 @@ class Layer{
     layer_type = "";
     activ_type = activation_type;
     init();
+    nParameters = weights.length * weights[0].length;
   }
   
-  Layer(int nNeurons){
+  public Layer(PApplet parent, int nNeurons){
+    this.parent = parent;
     this.nNeurons = nNeurons;
     neurons = new float [nNeurons];
     layer_type = "";
-     //for (int i = 0; i < nNeurons; i++){
-      //neurons[i] = random(0.0,1.0);
-    //}
   }
   
-  void init(){
+  public void init(){
     for (int i = 0; i < nNeurons; i++){
       for (int j = 0; j < prevLayer.nNeurons; j++){
-        weights[i][j] = random(-1.0, 1.0);
+        weights[i][j] = parent.random(-1.0, 1.0);
       }
     }
   }
   
-  void compute_output(){
+  public void compute_output(){
     //inputs x Weights (+ bias)
     for (int i = 0; i < nNeurons; i++){
       float sum = 0;
@@ -44,91 +53,122 @@ class Layer{
     }
   }
   
-  void activate(){
+  public void activate(){
     if (activ_type == "relu"){
       neurons = relu(neurons, nNeurons);
     }
     else if (activ_type == "sigmoid"){
       neurons = sigmoide(neurons, nNeurons);
     }
+    else if (activ_type == "softmax"){
+      neurons = softmax(neurons, nNeurons);
+    }
     else{
-      println("ERROR: No activation funcion selected");
+      parent.println("ERROR: No activation funcion selected");
     }
   }
   
-  void setWeights(float [][] w){
+  public void setWeights(float [][] w){
     weights = w;
   }
   
-  void printParams(){
-    println(layer_type);
-    print("\tNumber neurons: ");
-    println(neurons.length);
-    print("\tWeights dimension: (");
+  public void printParams(){
+    parent.println(layer_type);
+    parent.print("\tNumber neurons: ");
+    parent.println(neurons.length);
+    parent.print("\tWeights dimension: (");
     try{
-      print(weights.length);
-      print(",");
-      print(weights[0].length);
-      println(")");
+      parent.print(weights.length);
+      parent.print(",");
+      parent.print(weights[0].length);
+      parent.println(")");
     }
     catch (NullPointerException e){
-      println("NULL)");
+      parent.println("NULL)");
     }
     
-    print("\tActivation function: ");
-    println(activ_type);
+    parent.print("\tActivation function: ");
+    parent.println(activ_type);
     
-    //if(layer_type == "output_layer"){
-      //print("\tCost function: ");
-      //OutputLayer out = (OutputLayer)this;
-      //println(out.costo);
-      //print("\tMSE: ");
-      //println(out.error);
-    //}
+     parent.print("\tNumber of parameters: ");
+     parent.println(nParameters);
   }
 }
 
-class InputLayer extends Layer{
-  InputLayer(int nNeurons){
-    super(nNeurons);
+public class InputLayer extends Layer{
+  public InputLayer(PApplet parent,int nNeurons){
+    super(parent, nNeurons);
     layer_type = "input_layer";
   }
   
-  void setNeurons(float []num){
+  public void setNeurons(float []num){
     this.neurons = num;
   }
 }
 
-class OutputLayer extends Layer{
-  //float costo, error;
-  
-  OutputLayer(int nNeurons, Layer prev_Layer, String activation_type){
-    super(nNeurons, prev_Layer, activation_type);
+public class OutputLayer extends Layer{
+  public OutputLayer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
+    super(parent, nNeurons, prev_Layer, activation_type);
     layer_type = "output_layer";
-    //costo = func_costo(neurons, nNeurons, 4);
-    //error = mse(neurons, nNeurons, 4);
   }
 }
 
-class HiddenLayer extends Layer{
-  HiddenLayer(int nNeurons, Layer prev_Layer, String activation_type){
-    super(nNeurons, prev_Layer, activation_type);
+public class HiddenLayer extends Layer{
+  public HiddenLayer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
+    super(parent, nNeurons, prev_Layer, activation_type);
     layer_type = "hidden_layer";
   }
+  
+  public int num_correct(){
+    int index = 0;
+    
+    for (int i = 1; i < nNeurons; i++){
+      if (neurons[i] > neurons[index]){
+        index = i;
+      }
+    }
+    return index;
+  }
+  
+  public float prob_numcorrect(){
+    int index = 0;
+    
+    for (int i = 1; i < nNeurons; i++){
+      if (neurons[i] > neurons[index]){
+        index = i;
+      }
+    }
+    return neurons[index];
+  }
 }
 
-float [] sigmoide (float z[],int n){
+public float [] sigmoide (float z[],int n){
   float [] s = new float [n];
     for (int i = 0; i < n; i++){
-      s[i] = 1/(1+ exp(-z[i]));
+      s[i] = 1/(1+ parent.exp(-z[i]));
     }
   return s;
 }
   
-float [] relu (float z[],int n){
+public float [] relu (float z[],int n){
   float [] s = new float [n];
     for (int i = 0; i < n; i++){
-      s[i] = max(0,z[i]);
+      s[i] = parent.max(0,z[i]);
     }
+  return s;
+}
+
+public float [] softmax (float z[],int n){
+  float [] s = new float [n];
+  float sum = 0;
+  for (int i = 0; i < n; i++){
+    sum += exp(z[i]);
+    if (sum > 1e38){
+      sum = 1e38;
+    }
+  }
+  for (int i = 0; i < n; i++){
+    s[i] = exp(z[i]) / sum;
+  }
   return s;
 }
