@@ -8,8 +8,8 @@ public class Layer{
   protected final PApplet parent;
     
   float[][] weights;
-  float [] neurons;
-  int nNeurons;
+  protected float [] neurons;
+  protected int nNeurons;
   public Layer prevLayer;
   public String layer_type;
   public String activ_type;
@@ -123,52 +123,5 @@ public class Layer{
     s[i] = parent.exp(z[i]) / sum;
   }
   return s;
-  }
-}
-
-public class InputLayer extends Layer{
-  public InputLayer(PApplet parent,int nNeurons){
-    super(parent, nNeurons);
-    layer_type = "input_layer";
-  }
-  
-  public void setNeurons(float []num){
-    this.neurons = num;
-  }
-}
-
-public class OutputLayer extends Layer{
-  public OutputLayer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
-    super(parent, nNeurons, prev_Layer, activation_type);
-    layer_type = "output_layer";
-  }
-}
-
-public class HiddenLayer extends Layer{
-  public HiddenLayer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
-    super(parent, nNeurons, prev_Layer, activation_type);
-    layer_type = "hidden_layer";
-  }
-  
-  public int num_correct(){
-    int index = 0;
-    
-    for (int i = 1; i < nNeurons; i++){
-      if (neurons[i] > neurons[index]){
-        index = i;
-      }
-    }
-    return index;
-  }
-  
-  public float prob_numcorrect(){
-    int index = 0;
-    
-    for (int i = 1; i < nNeurons; i++){
-      if (neurons[i] > neurons[index]){
-        index = i;
-      }
-    }
-    return neurons[index];
   }
 }
