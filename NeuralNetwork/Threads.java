@@ -1,6 +1,6 @@
 package NeuralNetwork;
 
-import GeneticAlgorithm.*;
+//import GeneticAlgorithm.*;
 import processing.core.*;
 import processing.core.PApplet;
 import java.util.ArrayList; 

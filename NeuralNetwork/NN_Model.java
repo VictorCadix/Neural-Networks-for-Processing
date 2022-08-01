@@ -1,6 +1,6 @@
 package NeuralNetwork;
 
-import GeneticAlgorithm.*;
+//import GeneticAlgorithm.*;
 import processing.core.*;
 import processing.core.PApplet;
 import java.util.ArrayList; 
@@ -67,18 +67,20 @@ public class NN_Model{
     log_file4.println("Validation MNIST:");
   }
   
-  public void saveParamsLoss(int generation, int best, Population pop){
+  public void saveParamsLoss(int generation, int best, float fitness){
     log_file.print(generation);
     log_file.print(",");
-    log_file.println(pop.individuals[best].fitness);
+    log_file.println(fitness);
+    //log_file.println(pop.individuals[best].fitness);
   }
   
-  public void ParamsWeights(int best, Population pop){ 
-    int leng = pop.individuals[best].chromosome_length;
-    for(int i= 0; i < leng; i++){
-    log_file2.print(pop.individuals[best].chromosome[i]);
+  public void ParamsWeights(int best, int chr_length, float [] chromosome){ 
+    //int leng = pop.individuals[best].chromosome_length;
+    for(int i= 0; i < chr_length; i++){
+      log_file2.print(chromosome[i]);
+    //log_file2.print(pop.individuals[best].chromosome[i]);
     //log_file2.print(weights_byte[i]);
-      if(i < (leng-1)){
+      if(i < (chr_length-1)){
         log_file2.print("\t");
       }
     }
