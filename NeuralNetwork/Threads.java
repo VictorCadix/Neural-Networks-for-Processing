@@ -74,7 +74,6 @@ public class Threads extends Thread{
       }
     
       error /= batch_size;
-      indiv.loss = error;
       indiv.fitness = 1/error;
     }
     //println("Hilo " + threadNum + " ha acabado");
