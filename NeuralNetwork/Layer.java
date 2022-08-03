@@ -8,8 +8,8 @@ public class Layer{
   protected final PApplet parent;
     
   float[][] weights;
-  protected float [] neurons;
-  protected int nNeurons;
+  public float [] neurons;
+  public int nNeurons;
   public Layer prevLayer;
   public String layer_type;
   public String activ_type;
