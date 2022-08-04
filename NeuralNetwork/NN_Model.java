@@ -91,6 +91,10 @@ public class NN_Model{
     log_file3.println("Generacion: " + generacion + "\t" + "Secuencia: " + seq + "\t" + "Numero red: " + num + "\t" + "Probabilidad: " + prob + "\t" + "Numero Real: " + num_real);
   }
   
+  public void testFilesNavigation(int generacion, int seq, float dist){
+    log_file3.println("Generacion: " + generacion + "\t" + "Secuencia: " + seq + "\t" + "Distancia: " + dist);
+  }
+  
   public void sucess(int nImg, int suc){
      log_file4.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
      log_file4.println();
