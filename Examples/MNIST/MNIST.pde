@@ -128,6 +128,7 @@ void setup(){
   
   model.printParams(); 
   model.creatFiles();
+  model.creatFilesTest();
   model.creatFilesValidation();
 }
 
@@ -251,6 +252,8 @@ void draw(){
   if (generation == maxGenerations){
     model.ParamsWeights(best, population);
     model.exit2();
+    model.exit3();
+    model.exit4();
     super.exit();//let processing carry with it's regular exit routine
   }
 }

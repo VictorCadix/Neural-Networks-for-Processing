@@ -167,7 +167,7 @@ class NN_Model{
           w_f[i] = Float.parseFloat(w[i]);
         }
         //printArray(w_f);
-        genes2weights(float(w), neu, mod);
+        genes2weights(w_f, neu, mod);
       }
       reader.close();
     }

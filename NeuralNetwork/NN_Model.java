@@ -3,8 +3,10 @@ package NeuralNetwork;
 //import GeneticAlgorithm.*;
 import processing.core.*;
 import processing.core.PApplet;
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
 
 public class NN_Model{
   // The parent Processing applet
@@ -179,6 +181,25 @@ public class NN_Model{
     }
   }
   
+ public void readWeights(int [] neu, NN_Model mod) {
+    BufferedReader reader = parent.createReader("Data\\WEIGHTS.txt");
+    String line = null;
+    try {
+      while ((line = reader.readLine()) != null) {
+        String [] w = parent.split(line, parent.TAB);
+        float [] w_f = new float [w.length];
+        for(int i = 0; i < w.length; i++){
+          w_f[i] = Float.parseFloat(w[i]);
+        }
+        //printArray(w_f);
+        mod.genes2weights(w_f, neu, mod);
+      }
+      reader.close();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  } 
   //La capa de salida debe de calcular el costo de cada simulación. 
   //Para ello, se hace el cuadrado del valor que se obtiene en cada 
   //neurona de salida restando el valor que se desea obtener en cada 
