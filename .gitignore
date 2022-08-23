@@ -4,3 +4,5 @@ Examples/MNIST_Testing/Data/*
 Utils/*.txt
 Examples/MNIST_Testing/Data/*
 *.autosave
+NeuralNetwork/NeuralNetwork/*
+NeuralNetwork/NeuralNetwork.jar
