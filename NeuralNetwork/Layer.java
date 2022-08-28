@@ -124,4 +124,14 @@ public class Layer{
   }
   return s;
   }
+
+  public float [] tanh (float z[],int n){
+    float [] s = new float [n];
+    for (int i = 0; i < n; i++){
+      float exp_nx = parent.exp(-z[i]);
+      float exp_px = parent.exp(z[i]);
+      s[i] = (exp_px - exp_nx)/(exp_px + exp_nx);
+    }
+    return s;
+  }
 }
