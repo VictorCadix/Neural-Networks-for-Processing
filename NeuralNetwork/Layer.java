@@ -1,5 +1,6 @@
 package NeuralNetwork;
 
+import java.lang.Math;
 import processing.core.*;
 import processing.core.PApplet;
 
@@ -62,6 +63,9 @@ public class Layer{
     }
     else if (activ_type == "softmax"){
       neurons = softmax(neurons, nNeurons);
+    }
+    else if (activ_type == "tanh"){
+      neurons = tanh(neurons, nNeurons);
     }
     else{
       parent.println("ERROR: No activation funcion selected");
@@ -128,9 +132,7 @@ public class Layer{
   public float [] tanh (float z[],int n){
     float [] s = new float [n];
     for (int i = 0; i < n; i++){
-      float exp_nx = parent.exp(-z[i]);
-      float exp_px = parent.exp(z[i]);
-      s[i] = (exp_px - exp_nx)/(exp_px + exp_nx);
+      s[i] = (float)Math.tanh(z[i]);
     }
     return s;
   }
