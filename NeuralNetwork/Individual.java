@@ -33,7 +33,7 @@ public class Individual{
         for(int i = 0; i < chromosome_length; i++){
             if (parent.random(1) < mutation_rate){
                 chromosome [i] = parent.random(chr_min, chr_max);
-                parent.println("mutation gene: " + parent.str(i));
+                //parent.println("mutation gene: " + parent.str(i));
             }
         }
     }
