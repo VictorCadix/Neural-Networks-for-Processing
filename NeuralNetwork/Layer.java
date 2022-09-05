@@ -24,7 +24,6 @@ public class Layer{
     this.nNeurons = nNeu;
     weights = new float[nNeu][prevLayer.nNeurons+1];
     neurons = new float [nNeu];
-    
     init();
     nParameters = weights.length * weights[0].length;
   }
