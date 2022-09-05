@@ -161,7 +161,7 @@ public class NN_Model{
   public void genes2weights(float[] chromosome, int [] neu, NN_Model mod){
     float [][][] w = new float[neu.length-1] [] [];
     for(int n = 0; n < (neu.length-1); n++){
-      w[n] = new float[neu[n+1]] [neu[n]];
+      w[n] = new float[neu[n+1]] [neu[n]+1];
     }
   
     int i = 0;
