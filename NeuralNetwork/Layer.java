@@ -12,32 +12,33 @@ public class Layer{
   public float [] neurons;
   public int nNeurons;
   public Layer prevLayer;
-  public String layer_type;
+  public String lay_type;
   public String activ_type;
   int nParameters = 0;
   
-  public Layer(PApplet parent, int nNeurons, Layer prev_Layer, String activation_type){
+  public Layer(PApplet parent, int nNeu, Layer prev_Layer, String activation_type, String layer_type){
     this.parent = parent;
-    prevLayer = prev_Layer;
-    this.nNeurons = nNeurons;
-    weights = new float[nNeurons][prevLayer.nNeurons];
-    neurons = new float [nNeurons];
-    layer_type = "";
-    activ_type = activation_type;
+    this.prevLayer = prev_Layer;
+    this.lay_type = layer_type;
+    this.activ_type = activation_type;
+    this.nNeurons = nNeu;
+    weights = new float[nNeu][prevLayer.nNeurons+1];
+    neurons = new float [nNeu];
+    
     init();
     nParameters = weights.length * weights[0].length;
   }
   
-  public Layer(PApplet parent, int nNeurons){
+  public Layer(PApplet parent, int nNeu, String layer_type){
     this.parent = parent;
-    this.nNeurons = nNeurons;
-    neurons = new float [nNeurons];
-    layer_type = "";
+    this.nNeurons = nNeu;
+    this.lay_type = layer_type;
+    neurons = new float [nNeu];
   }
   
   public void init(){
     for (int i = 0; i < nNeurons; i++){
-      for (int j = 0; j < prevLayer.nNeurons; j++){
+      for (int j = 0; j < prevLayer.nNeurons+1; j++){
         weights[i][j] = parent.random((float)-1.0,(float) 1.0);
       }
     }
@@ -47,8 +48,13 @@ public class Layer{
     //inputs x Weights (+ bias)
     for (int i = 0; i < nNeurons; i++){
       float sum = 0;
-      for (int j = 0; j < prevLayer.nNeurons; j++){
-        sum += weights[i][j] * prevLayer.neurons[j];
+      for (int j = 0; j < prevLayer.nNeurons+1; j++){
+        if(j != prevLayer.nNeurons){
+          sum += weights[i][j] * prevLayer.neurons[j];
+        }
+        else{
+          sum += weights[i][j];
+        } 
       }
       neurons[i] = sum;
     }
@@ -77,7 +83,7 @@ public class Layer{
   }
   
   public void printParams(){
-    parent.println(layer_type);
+    parent.println(lay_type);
     parent.print("\tNumber neurons: ");
     parent.println(neurons.length);
     parent.print("\tWeights dimension: (");

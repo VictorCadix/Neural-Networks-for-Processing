@@ -1,5 +1,4 @@
 import NeuralNetwork.*;
-//import GeneticAlgorithm.*;
 
 NN_Model model;
 InputLayer in;

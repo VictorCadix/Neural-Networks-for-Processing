@@ -5,8 +5,7 @@ import processing.core.PApplet;
 
 public class InputLayer extends Layer{
   public InputLayer(PApplet parent,int nNeurons){
-    super(parent, nNeurons);
-    layer_type = "input_layer";
+    super(parent, nNeurons, "input_layer");
   }
   
   public void setNeurons(float []num){
