@@ -38,8 +38,8 @@ public class Layer{
   
   public void init(){
     for (int i = 0; i < nNeurons; i++){
-      //for (int j = 0; j < prevLayer.nNeurons+1; j++){
-      for (int j = 0; j < prevLayer.nNeurons; j++){
+      for (int j = 0; j < prevLayer.nNeurons+1; j++){
+      //for (int j = 0; j < prevLayer.nNeurons; j++){
         weights[i][j] = parent.random((float)-1.0,(float) 1.0);
       }
     }
@@ -49,10 +49,10 @@ public class Layer{
     //inputs x Weights (+ bias)
     for (int i = 0; i < nNeurons; i++){
       float sum = 0;
-      for (int j = 0; j < prevLayer.nNeurons; j++){
+      /*for (int j = 0; j < prevLayer.nNeurons; j++){
         sum += weights[i][j] * prevLayer.neurons[j];
-      }
-      /*for (int j = 0; j < prevLayer.nNeurons+1; j++){
+      }*/
+      for (int j = 0; j < prevLayer.nNeurons+1; j++){
         if(j == prevLayer.nNeurons){
           sum += weights[i][j];
         }
@@ -60,7 +60,6 @@ public class Layer{
           sum += weights[i][j] * prevLayer.neurons[j];
         } 
       }
-      */
       neurons[i] = sum;
     }
   }
