@@ -22,8 +22,8 @@ public class Layer{
     this.lay_type = layer_type;
     this.activ_type = activation_type;
     this.nNeurons = nNeu;
-    //weights = new float[nNeu][prevLayer.nNeurons+1];
-    weights = new float[nNeu][prevLayer.nNeurons];
+    weights = new float[nNeu][prevLayer.nNeurons+1];
+    //weights = new float[nNeu][prevLayer.nNeurons];
     neurons = new float [nNeu];
     init();
     nParameters = weights.length * weights[0].length;
