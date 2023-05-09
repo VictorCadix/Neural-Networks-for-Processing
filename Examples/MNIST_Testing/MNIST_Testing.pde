@@ -1,3 +1,5 @@
+import NeuralNetwork.*;
+
 NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
@@ -17,6 +19,23 @@ int nImg;
 
 void setup(){
   //size(800,400);
+  model = new NN_Model(this);
+  neu = new int [4];
+  neu[0] = 784; neu[1] = 18; neu[2] = 18; neu[3]= 10;
+  
+  in = new InputLayer(this, neu[0]);
+  lay1 = new HiddenLayer(this, neu[1], in, "relu");
+  lay2 = new HiddenLayer(this, neu[2], lay1, "relu");
+  out = new OutputLayer(this, neu[3], lay2, "softmax");
+  
+  model.addLayer(in);
+  model.addLayer(lay1);
+  model.addLayer(lay2);
+  model.addLayer(out);
+  
+  model.printParams();
+  model.readWeights(neu, model);
+  model.creatFilesTest();
   imag = loadBytes("t10k-images.idx3-ubyte");
   num = loadBytes("t10k-labels.idx1-ubyte");
   
@@ -42,34 +61,16 @@ void setup(){
     }
   }
   for (int i = 0; i < nImg; i++) {
-    norm_img_int[i] = normalizacion(img_int[i]);
+    norm_img_int[i] = model.normalizacion(img_int[i]);
   }
-  
-  model = new NN_Model();
-  neu = new int [4];
-  neu[0] = 784; neu[1] = 18; neu[2] = 18; neu[3]= 10;
-  
-  in = new InputLayer(neu[0]);
-  lay1 = new HiddenLayer(neu[1], in, "relu");
-  lay2 = new HiddenLayer(neu[2], lay1, "relu");
-  out = new OutputLayer(neu[3], lay2, "softmax");
-  
-  model.addLayer(in);
-  model.addLayer(lay1);
-  model.addLayer(lay2);
-  model.addLayer(out);
-  
-  model.printParams();
-  model.readWeights(neu, model);
-  model.creatFilesTest();
   
 
   for(int i = 0; i < nImg; i++){
     in.setNeurons(norm_img_int[i]);
     model.forward_prop();
-    nums = out.numMNIST();
-    prob = out.prob_numMNIST();
-    model.testFiles(i+1,nums,prob,num_int[i], out);
+    nums = num_correct(model.layers.get(model.layers.size()-1).nNeurons,model.layers.get(model.layers.size()-1).neurons);
+    prob = prob_numcorrect(model.layers.get(model.layers.size()-1).nNeurons,model.layers.get(model.layers.size()-1).neurons);
+    model.testFiles(i+1,0,nums,prob,num_int[i]);
     
     if (nums == num_int[i]){
       sum++;
@@ -82,4 +83,24 @@ void setup(){
 
 void draw(){
   
+}
+
+int num_correct(int nNeurons, float neurons[]){
+  int index = 0;
+  for (int i = 1; i < nNeurons; i++){
+    if (neurons[i] > neurons[index]){
+      index = i;
+    }
+  }
+  return index;
+}
+
+float prob_numcorrect(int nNeurons, float neurons[]){
+  int index = 0;
+  for (int i = 1; i < nNeurons; i++){
+    if (neurons[i] > neurons[index]){
+      index = i;
+    }
+  }
+  return neurons[index];
 }
