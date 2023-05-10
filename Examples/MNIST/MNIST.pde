@@ -173,7 +173,7 @@ void draw(){
       error += model.compute_loss(y_train[i]);
     }
     //println ("NEW");
-    println("ERROR: " + error);
+    //println("ERROR: " + error);
     error /= batch_size;
     indiv.fitness = 1/error;
     //flat++;

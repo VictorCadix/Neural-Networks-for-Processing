@@ -77,7 +77,7 @@ void setup(){
     }
   }
   model.sucess(nImg, sum);
-  model.exit2();
+  model.exit3();
   super.exit();
 }
 
