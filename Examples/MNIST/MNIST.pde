@@ -29,7 +29,7 @@ int nImg;
 //Training
 int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 100;
+int maxGenerations = 500;
 int epoch = 0;
 
 //Validation
