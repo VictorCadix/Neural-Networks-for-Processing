@@ -98,9 +98,9 @@ public class NN_Model{
   }
   
   public void sucess(int nImg, int suc){
-     log_file4.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
-     log_file4.println();
-     log_file4.println();
+     log_file3.println("El exito de la red ha sido de: " + (((float)suc/(float)nImg)*100) +" %");
+     log_file3.println();
+     log_file3.println();
   }
   
   public void exit1(){
