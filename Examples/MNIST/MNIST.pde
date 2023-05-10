@@ -29,7 +29,7 @@ int nImg;
 //Training
 int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 1000;
+int maxGenerations = 100;
 int epoch = 0;
 
 //Validation
@@ -64,7 +64,7 @@ void setup(){
   model.addLayer(lay1);
   model.addLayer(lay2);
   model.addLayer(out);
-  model.setLoss("categorical_crossentropy");
+  model.setLoss("mse");
   
   model.printParams(); 
   model.creatFiles();
@@ -138,7 +138,7 @@ void setup(){
 }
 
 void draw(){
-  /*
+  
   PImage disp_img = createImage(28, 28, RGB);
   disp_img.loadPixels();
   for (int i = 0; i < disp_img.pixels.length; i++) {
@@ -147,7 +147,7 @@ void draw(){
   }
   disp_img.updatePixels();
   image(disp_img, 0, 0);
-  */
+  
   
   generation++;
   println("Generation: " + str(generation));
@@ -173,7 +173,7 @@ void draw(){
       error += model.compute_loss(y_train[i]);
     }
     //println ("NEW");
-    //println("ERROR: " + error);
+    println("ERROR: " + error);
     error /= batch_size;
     indiv.fitness = 1/error;
     //flat++;
@@ -199,7 +199,7 @@ void draw(){
     }
   }
   float accuracy = float(sum) / batch_size;
-  print(population.individuals[best].fitness);
+  print(population.individuals[0].fitness);
   println(" -> " + str(accuracy*100) + "% " + "mse: " + str(mse_ / batch_size));
   
   last_img = last_img + batch_size;

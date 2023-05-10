@@ -228,7 +228,7 @@ public class NN_Model{
     float sum = 0;
     int n = z.length;
     for (int i = 0; i < n; i++){
-      sum += parent.log((float)(z[i] + 1e-30)) * y_[i];
+      sum += parent.log((float)(z[i] + 1e-10)) * y_[i];
     }
     return -sum;
 }
