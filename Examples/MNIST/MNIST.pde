@@ -7,10 +7,10 @@ OutputLayer out;
 int [] neu;
 Population population;
 int nParameters = 0;
-int nIndiv = 100;
+int nIndiv = 1000;
 int nCrossPoints = 20;
 float mutation_rate = 0.005;
-int elite_indivs = 25;
+int elite_indivs = 250;
 
 float min_error;
 int generation = 0;
@@ -29,7 +29,7 @@ int nImg;
 //Training
 int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 500;
+int maxGenerations = 1000;
 int epoch = 0;
 
 //Validation
