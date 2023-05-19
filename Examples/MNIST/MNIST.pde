@@ -7,10 +7,10 @@ OutputLayer out;
 int [] neu;
 Population population;
 int nParameters = 0;
-int nIndiv = 1000;
+int nIndiv = 100;
 int nCrossPoints = 20;
 float mutation_rate = 0.005;
-int elite_indivs = 250;
+int elite_indivs = 25;
 
 float min_error;
 int generation = 0;
@@ -29,7 +29,7 @@ int nImg;
 //Training
 int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 1000;
+int maxGenerations = 500;
 int epoch = 0;
 
 //Validation
@@ -46,7 +46,7 @@ void setup(){
   
   model = new NN_Model(this);
   neu = new int [4];
-  neu[0] = 784; neu[1] = 392; neu[2] = 392; neu[3]= 10;
+  neu[0] = 784; neu[1] = 588; neu[2] = 196; neu[3]= 10;
   
   in = new InputLayer(this, neu[0]);
   lay1 = new HiddenLayer(this, neu[1], in, "tanh");

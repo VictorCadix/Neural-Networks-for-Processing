@@ -21,7 +21,7 @@ void setup(){
   //size(800,400);
   model = new NN_Model(this);
   neu = new int [4];
-  neu[0] = 784; neu[1] = 392; neu[2] = 392; neu[3]= 10;
+  neu[0] = 784; neu[1] = 588; neu[2] = 196; neu[3]= 10;
   
   in = new InputLayer(this, neu[0]);
   lay1 = new HiddenLayer(this, neu[1], in, "tanh");
