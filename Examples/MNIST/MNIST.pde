@@ -1,3 +1,5 @@
+import NeuralNetwork.*;
+
 NN_Model model;
 InputLayer in;
 HiddenLayer lay1,lay2;
@@ -6,9 +8,9 @@ int [] neu;
 Population population;
 int nParameters = 0;
 int nIndiv = 100;
-int nCrossPoints = 1000;
-float mutation_rate = 0.0001;
-int elitism = 0;
+int nCrossPoints = 20;
+float mutation_rate = 0.005;
+int elite_indivs = 25;
 
 float min_error;
 int generation = 0;
@@ -27,7 +29,7 @@ int nImg;
 //Training
 int batch_size = 200;
 int last_img = 0;
-int maxGenerations = 10000;
+int maxGenerations = 500;
 int epoch = 0;
 
 //Validation
@@ -41,6 +43,34 @@ float prob = 0.0;
 
 void setup(){
   size(800,400);
+  
+  model = new NN_Model(this);
+  neu = new int [4];
+  neu[0] = 784; neu[1] = 588; neu[2] = 196; neu[3]= 10;
+  
+  in = new InputLayer(this, neu[0]);
+  lay1 = new HiddenLayer(this, neu[1], in, "tanh");
+  lay2 = new HiddenLayer(this, neu[2], lay1, "tanh");
+  out = new OutputLayer(this, neu[3], lay2, "tanh");
+  
+  for(int i = 0; i < (neu.length-1); i++){
+    nParameters += neu[i]*neu[i+1];
+  }
+  //println(nParameters);
+  population = new Population(this, nIndiv, nParameters);
+  population.crossover_type = "multiple_random";
+  
+  model.addLayer(in);
+  model.addLayer(lay1);
+  model.addLayer(lay2);
+  model.addLayer(out);
+  model.setLoss("mse");
+  
+  model.printParams(); 
+  model.creatFiles();
+  model.creatFilesTest();
+  model.creatFilesValidation();
+  
   imag = loadBytes("train-images.idx3-ubyte");
   num = loadBytes("train-labels.idx1-ubyte");
   
@@ -68,11 +98,11 @@ void setup(){
   //Normalize the data
   x_train = new float[nSmples_train][28*28];
   for (int i = 0; i < nSmples_train; i++){
-    x_train[i] = normalizacion(img_int [i]);
+    x_train[i] = model.normalizacion(img_int [i]);
   }
   x_val = new float[nSmples_val][28*28];
   for (int i = 0; i < nSmples_val; i++){
-    x_val[i] = normalizacion(img_int [nSmples_train + i]);
+    x_val[i] = model.normalizacion(img_int [nSmples_train + i]);
   }
   
   //Create output vector
@@ -104,35 +134,11 @@ void setup(){
   println();
   */  
   
-  model = new NN_Model();
-  neu = new int [4];
-  neu[0] = 784; neu[1] = 18; neu[2] = 18; neu[3]= 10;
   
-  in = new InputLayer(neu[0]);
-  lay1 = new HiddenLayer(neu[1], in, "relu");
-  lay2 = new HiddenLayer(neu[2], lay1, "relu");
-  out = new OutputLayer(neu[3], lay2, "softmax");
-  
-  for(int i = 0; i < (neu.length-1); i++){
-    nParameters += neu[i]*neu[i+1];
-  }
-  //println(nParameters);
-  population = new Population(nIndiv, nParameters);
-  population.crossover_type = "multiple_random";
-  
-  model.addLayer(in);
-  model.addLayer(lay1);
-  model.addLayer(lay2);
-  model.addLayer(out);
-  model.setLoss("categorical_crossentropy");
-  
-  model.printParams(); 
-  model.creatFiles();
-  model.creatFilesValidation();
 }
 
 void draw(){
-  /*
+  
   PImage disp_img = createImage(28, 28, RGB);
   disp_img.loadPixels();
   for (int i = 0; i < disp_img.pixels.length; i++) {
@@ -141,7 +147,7 @@ void draw(){
   }
   disp_img.updatePixels();
   image(disp_img, 0, 0);
-  */
+  
   
   generation++;
   println("Generation: " + str(generation));
@@ -169,7 +175,6 @@ void draw(){
     //println ("NEW");
     //println("ERROR: " + error);
     error /= batch_size;
-    indiv.loss = error;
     indiv.fitness = 1/error;
     //flat++;
     //println("INDIVIDUO: " +  flat +"FIT: " + indiv.fitness);
@@ -186,20 +191,20 @@ void draw(){
     in.setNeurons(x_train[i]);
     model.forward_prop();
     //mse
-    mse_ += mse(model.layers.get(model.layers.size()-1).neurons, y_train[i]);
+    mse_ += model.mse(model.layers.get(model.layers.size()-1).neurons, y_train[i]);
     //accuracy
-    nums = out.numMNIST();
+    nums = num_correct(model.layers.get(model.layers.size()-1).nNeurons,model.layers.get(model.layers.size()-1).neurons);
     if (nums == num_int[i]){
       sum++;
     }
   }
   float accuracy = float(sum) / batch_size;
-  print(population.individuals[best].loss);
+  print(population.individuals[0].fitness);
   println(" -> " + str(accuracy*100) + "% " + "mse: " + str(mse_ / batch_size));
   
   last_img = last_img + batch_size;
 
-  model.saveParamsLoss(generation, best, population);
+  model.saveParamsLoss(generation, best, population.individuals[best].fitness);
   
   if (do_validation){
     do_validation = false;
@@ -209,8 +214,8 @@ void draw(){
     for(int i = 0; i < nSmples_val; i++){
       in.setNeurons(x_val[i]);
       model.forward_prop();
-      nums = out.numMNIST();
-      prob = out.prob_numMNIST();
+      nums = num_correct(model.layers.get(model.layers.size()-1).nNeurons,model.layers.get(model.layers.size()-1).neurons);
+      prob = prob_numcorrect(model.layers.get(model.layers.size()-1).nNeurons,model.layers.get(model.layers.size()-1).neurons);
       model.testFiles(generation, i+1,nums,prob,num_int[i]);
       if (nums == num_int[i]){
         sum++;
@@ -224,33 +229,74 @@ void draw(){
     model.sucess(nImg, sum);
   }
   
-  
-  Individual child [] = new Individual [nIndiv];
-  for (int i = 0; i < nIndiv; i++){
-    int p1 = population.get_parent();
-    int p2 = population.get_parent();
-    //println("Individuo: " + i);
-    //println("Cromosoma del indv " + i + " de la poblacion: " + population.individuals[i].chromosome[8]);
-    //println(str(p1) + ":" + str(p2));
+Individual child [] = new Individual [nIndiv];
     
-    //crossover
-    child[i] = population.crossover(p1, p2, nCrossPoints);
-    //println("Cromosoma del hijo: " + child[i].chromosome[8]);
-    //mutation
-    child[i].addMutation(mutation_rate);
-    //println(child[i].chromosome[8]);
-  }
+    //Elitism
+    if(elite_indivs != 0){
+      int [] best_indivs = new int[elite_indivs];
+      best_indivs[0] = best;
+      float last_best_fitness = population.individuals[best].fitness;
+      float best_fitness;
+      for (int ei = 0; ei < elite_indivs; ei++){
+        best_fitness = 0;
+        for (int i = 0; i < nIndiv; i++){
+          if (population.individuals[i].fitness > best_fitness){
+            if (population.individuals[i].fitness < last_best_fitness){
+              best_fitness = population.individuals[i].fitness;
+              best_indivs[ei] = i;
+            }
+          }
+        }
+        last_best_fitness = best_fitness;
+      }    
+    
+      for (int i = 0; i < elite_indivs; i++){
+        //print("best_indivs:" + best_indivs[i]);
+        //println("\tfitness:" + population.individuals[best_indivs[i]].fitness);
+        child[i] = population.individuals[best_indivs[i]]; 
+      }
+    }
+    
+    for (int i = elite_indivs; i < nIndiv; i++){
+      int p1 = population.get_parent();
+      int p2 = population.get_parent();
+    
+      //crossover
+      child[i] = population.crossover(p1, p2, nCrossPoints);
+      //mutation
+      child[i].addMutation(mutation_rate);
+    }
   
-  // Renew population
-  for (int i = 0; i < nIndiv; i++){
-    //println(population.individuals[i].chromosome[8]);
-    population.individuals[i] = child[i];  
-    //println(population.individuals[i].chromosome[8]);
-  }
+    // Renew population
+    for (int i = 0; i < nIndiv; i++){
+      population.individuals[i] = child[i];  
+    }
   
   if (generation == maxGenerations){
-    model.ParamsWeights(best, population);
+    model.ParamsWeights(best, population.individuals[best].chromosome_length, population.individuals[best].chromosome);
     model.exit2();
+    model.exit3();
+    model.exit4();
     super.exit();//let processing carry with it's regular exit routine
   }
+}
+
+int num_correct(int nNeurons, float neurons[]){
+  int index = 0;
+  for (int i = 1; i < nNeurons; i++){
+    if (neurons[i] > neurons[index]){
+      index = i;
+    }
+  }
+  return index;
+}
+
+float prob_numcorrect(int nNeurons, float neurons[]){
+  int index = 0;
+  for (int i = 1; i < nNeurons; i++){
+    if (neurons[i] > neurons[index]){
+      index = i;
+    }
+  }
+  return neurons[index];
 }
